@@ -1,0 +1,22 @@
+#!/bin/bash
+
+echo 'Hello, World2'
+# copy ssh keys
+mkdir /home/${user_name}/.ssh
+cp /root/.ssh/authorized_keys /home/${user_name}/.ssh/authorized_keys
+chmod 755 /home/${user_name}/.ssh
+chmod 600 /home/${user_name}/.ssh/authorized_keys
+chown ${user_name}:${user_name} -R /home/${user_name}/.ssh
+
+# configure ssh
+sed -i "s/#Port 22/Port ${ssh_port}/" /etc/ssh/sshd_config
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
+sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+sed -i 's/#PasswordAuthentication no/PasswordAuthentication no/' /etc/ssh/sshd_config
+sed -i 's/#PermitEmptyPasswords no/PermitEmptyPasswords no/' /etc/ssh/sshd_config
+systemctl restart ssh
+systemctl stop ufw.service
+systemctl disable ufw.service
+
+# disable manual restart confirmation
+sed -i "s/#\$nrconf{restart} = 'i';/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf

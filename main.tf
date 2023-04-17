@@ -41,6 +41,42 @@ resource "hcloud_network_subnet" "private-network-subnet" {
   ip_range     = var.private_network_subnet_ip_range
 }
 
+# create cloud config for entrance
+data "cloudinit_config" "cloud_init_entrance" {
+  gzip          = false
+  base64_encode = false
+  
+  part {
+    filename     = "setup-basic.sh"
+    content_type = "text/x-shellscript"
+
+    content = templatefile("./templates/setup-basic.tftpl", {
+      "ssh_port"  = var.custom_ssh_port
+      "user_name" = var.user_name
+    })
+  }
+
+  part {
+    filename     = "setup-entrance.sh"
+    content_type = "text/x-shellscript"
+
+    content = file("./scripts/setup-entrance.sh")
+  }
+
+
+  part {
+    filename     = "cloud-config.yaml"
+    content_type = "text/cloud-config"
+
+    content = templatefile("./templates/entrance-cloud-init.tftpl", {
+      "ssh_port"    = var.custom_ssh_port
+      "user_passwd" = var.user_passwd
+      "user_name"   = var.user_name
+    })
+  }
+}
+
+
 # create entrance server
 resource "hcloud_server" "entrance-server" {
   name               = "entrance-${var.entrance_image}-${var.location}"
@@ -53,12 +89,13 @@ resource "hcloud_server" "entrance-server" {
     hcloud_ssh_key.hetzner_entrance_key.id,
     hcloud_ssh_key.hetzner_nodes_key.id,
   ]
-  user_data = templatefile("./templates/entrance-cloud-init.tftpl", {
-    "ssh_port"    = var.custom_ssh_port
-    "user_passwd" = var.user_passwd
-    "user_name"   = var.user_name
+  user_data = data.cloudinit_config.cloud_init_entrance.rendered
+  # templatefile("./templates/entrance-cloud-init.tftpl", {
+  #   "ssh_port"    = var.custom_ssh_port
+  #   "user_passwd" = var.user_passwd
+  #   "user_name"   = var.user_name
 
-  })
+  # })
   public_net {
     ipv4_enabled = true
     ipv6_enabled = true
@@ -67,6 +104,29 @@ resource "hcloud_server" "entrance-server" {
   network {
     network_id = hcloud_network.private-network.id
   }
+
+  connection {
+    host        = self.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "cloud-init status --wait"
+    ]
+  }
+
+  # provisioner "file" {
+  #   source      = "./scripts/setup-entrance.sh"
+  #   destination = "/home/${var.user_name}/setup-entrance.sh"
+  # }
+
+  # provisioner "remote-exec" {
+  #   inline = ["SSH_PORT=${var.custom_ssh_port} bash  '/home/${var.user_name}/setup-entrance.sh'"]
+  # }
 
   labels = {
     "source" = "k8s-dev"
@@ -77,11 +137,12 @@ resource "hcloud_server" "entrance-server" {
   ]
 }
 
-# output "name" {
-#   value = templatefile("./templates/entrance-cloud-init.tftpl", {
-#     "ssh_port"    = var.custom_ssh_port
-#     "user_passwd" = var.user_passwd
-#     "user_name"   = var.user_name
-#   })
-#   sensitive = true
-# }
+output "name" {
+  value = data.cloudinit_config.cloud_init_entrance.rendered
+  # templatefile("./templates/entrance-cloud-init.tftpl", {
+  #   "ssh_port"    = var.custom_ssh_port
+  #   "user_passwd" = var.user_passwd
+  #   "user_name"   = var.user_name
+  # })
+  sensitive = true
+}
