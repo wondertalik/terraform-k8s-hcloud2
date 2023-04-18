@@ -22,7 +22,14 @@ variable "master_type" {
   default     = "cx21"
 }
 
-variable "node_count" {
+variable "node_type" {
+  description = "For more types have a look at https://www.hetzner.de/cloud"
+  default     = "cx21"
+}
+
+variable "proxy_type" {
+  description = "For more types have a look at https://www.hetzner.de/cloud"
+  default     = "cx11"
 }
 
 variable "network_zone" {
@@ -50,9 +57,42 @@ variable "node_image" {
   default     = "ubuntu-22.04"
 }
 
-variable "node_type" {
-  description = "For more types have a look at https://www.hetzner.de/cloud"
-  default     = "cx21"
+variable "proxy_image" {
+  description = "Predefined Image that will be used to spin up the machines (Currently supported: ubuntu-22.04, ubuntu-20.04, ubuntu-18.04)"
+  default     = "ubuntu-22.04"
+}
+
+variable "node_count" {
+}
+
+variable "master_ip" {
+  description = "master ip"
+}
+variable "node_ip" {
+  description = "node ip"
+}
+variable "proxy_ip" {
+  description = "proxy ip"
+}
+
+variable "proxy_port" {
+  description = "proxy port"
+  default     = 3128
+}
+
+
+variable "ssh_private_key_proxy_name" {
+  description = "Name of the ssh key in hcloud for proxy"
+  default     = "key_hetzner_proxy"
+}
+
+variable "ssh_private_key_proxy" {
+  description = "Private Key to access the machines"
+  default     = "~/.ssh/id_ed25519"
+}
+
+variable "ssh_public_key_proxy" {
+  description = "Public Key to authorized the access for the machines"
 }
 
 variable "ssh_private_key_entrance_name" {

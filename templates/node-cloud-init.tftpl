@@ -1,0 +1,32 @@
+#cloud-config
+users:
+  - name: ${user_name}
+    gecos: ${user_name}
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: ${user_passwd}
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+packages:
+  - apt-transport-https
+  - curl
+  - software-properties-common
+  - vim
+  - wget
+apt:
+  proxy: "http://${proxy_ip}:${proxy_port}/"
+  http_proxy: "http://${proxy_ip}:${proxy_port}/"
+  ftp_proxy: "http://${proxy_ip}:${proxy_port}/"
+  https_proxy: "http://${proxy_ip}:${proxy_port}/"
+runcmd:
+  - echo "export http_proxy=\"http://${proxy_ip}:${proxy_port}/\"" >> /etc/environment
+  - echo "export https_proxy=\"http://${proxy_ip}:${proxy_port}/\"" >> /etc/environment
+  - echo "export ftp_proxy=\"http://${proxy_ip}:${proxy_port}/\"" >> /etc/environment
+  - echo no_proxy="localhost,127.0.0.1,::1" >> /etc/environment
+
+  
+  
+ 
