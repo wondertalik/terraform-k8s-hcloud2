@@ -18,7 +18,8 @@ data "cloudinit_config" "cloud_init_entrance" {
     filename     = "setup-entrance.sh"
     content_type = "text/x-shellscript"
 
-    content = file("./scripts/setup-entrance.sh")
+    content = replace(file("./scripts/setup-entrance.sh"), "[kubernetes-version]", var.kubernetes_version)
+
   }
 
 

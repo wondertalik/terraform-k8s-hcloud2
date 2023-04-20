@@ -91,7 +91,7 @@ sysctl --system
 #Installing kubeadm, kubelet and kubectl
 curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-apt update && apt-get -qq install -y kubelet=1.26.4-00 kubeadm=1.26.4-00 && apt-mark hold kubelet kubeadm
+apt update && apt-get -qq install -y kubelet=[kubernetes-version]-00 kubeadm=[kubernetes-version]-00 && apt-mark hold kubelet kubeadm
 
 swapoff -a
 sed -i "s/\/swap.img    none    swap    sw      0       0//" /etc/fstab

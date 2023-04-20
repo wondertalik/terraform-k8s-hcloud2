@@ -7,7 +7,7 @@ curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cl
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
 
 apt-get update
-apt-get -qq install -y kubectl=1.26.4-00 && apt-mark hold kubectl
+apt-get -qq install -y kubectl=[kubernetes-version]-00 && apt-mark hold kubectl
 
 #add help repository
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null

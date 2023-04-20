@@ -18,7 +18,7 @@ data "cloudinit_config" "cloud_init_nodes" {
     filename     = "setup-node.sh"
     content_type = "text/x-shellscript"
 
-    content = file("./scripts/setup-node.sh")
+    content = replace(file("./scripts/setup-node.sh"), "[kubernetes-version]", var.kubernetes_version)
   }
 
   part {
