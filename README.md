@@ -1,0 +1,114 @@
+# Terraform Kubernetes on Hetzner Cloud
+
+This repository will help to setup an opionated Kubernetes Cluster with [kubeadm](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/) on [Hetzner Cloud](https://www.hetzner.com/cloud?country=us).
+
+## Usage
+
+# Install and configure hcloud
+
+## Create hetzner project and confiugre hcloud-cli
+
+1. Open [console](https://console.hetzner.cloud) and create [project](https://docs.hetzner.com/cloud/general/faq) with name `k8s-dev-stand`
+2. Install [hcloud-cli](https://github.com/hetznercloud/cli).
+3. Create [api token](https://docs.hetzner.com/cloud/api/getting-started/generating-api-token) with permissions *Read & Write* from projet `k8s-dev-stand`
+
+### Generate ssh-keys for servers
+
+Generate a new SSH keys in your terminal called `id_hetzner_entrance` and `id_hetzner_nodes`. The argument provided with the -f flag creates the key in the current directory and creates four files called id_hetzner_entrance, id_hetzner_entrance.pub and id_hetzner_nodes, id_hetzner_nodes.pub. Change the placeholder email address to your email address.
+
+
+- Generate ssh-key for proxy server
+
+```sh
+ssh-keygen -t ed25519 -C "your_email@example.com" -f ~/.ssh/id_hetzner_proxy
+```
+
+- Generate ssh-key for entrance server
+
+```sh
+ssh-keygen -t ed25519 -C "your_email@example.com" -f ~/.ssh/id_hetzner_entrance
+```
+
+- Generate ssh-key for internal connections
+
+```sh
+ssh-keygen -t ed25519 -C "your_email@example.com" -f ~/.ssh/id_hetzner_nodes
+```
+
+
+```sh
+$ git clone https://github.com/solidnerd/terraform-k8s-hcloud.git
+$ terraform init
+$ terraform apply
+```
+
+## Example
+
+```
+$ terraform init
+$ terraform apply
+$ KUBECONFIG=secrets/admin.conf kubectl get nodes
+$ KUBECONFIG=secrets/admin.conf kubectl apply -f https://docs.projectcalico.org/archive/v3.15/manifests/calico.yaml
+$ KUBECONFIG=secrets/admin.conf kubectl get pods --namespace=kube-system -o wide
+$ KUBECONFIG=secrets/admin.conf kubectl run nginx --image=nginx
+$ KUBECONFIG=secrets/admin.conf kubectl expose deploy nginx --port=80 --type NodePort
+```
+
+## Variables
+
+|  Name                    |  Default     |  Description                                                                      | Required |
+|:-------------------------|:-------------|:----------------------------------------------------------------------------------|:--------:|
+| `hcloud_token`        | ``                      |API Token that will be generated through your hetzner cloud project https://console.hetzner.cloud/projects                   | Yes |
+| `master_count`        | `1`                     | Amount of masters that will be created                                                                                      | No  |
+| `master_image`        | `ubuntu-20.04`          | Predefined Image that will be used to spin up the machines (Currently supported: ubuntu-20.04, ubuntu-18.04)                | No  |
+| `master_type`         | `cx11`                  | Machine type for more types have a look at https://www.hetzner.de/cloud                                                     | No  |
+| `node_count`          | `1`                     | Amount of nodes that will be created                                                                                        | No  |
+| `node_image`          | `ubuntu-20.04`          | Predefined Image that will be used to spin up the machines (Currently supported: ubuntu-20.04, ubuntu-18.04)                | No  |
+| `node_type`           | `cx11`                  | Machine type for more types have a look at https://www.hetzner.de/cloud                                                     | No  |
+| `ssh_private_key`     | `~/.ssh/id_ed25519`     | Private Key to access the machines                                                                                          | No  |
+| `ssh_public_key`      | `~/.ssh/id_ed25519.pub` | Public Key to authorized the access for the machines                                                                        | No  |
+| `docker_version`      | `19.03`                 | Docker CE version that will be installed                                                                                    | No  |
+| `kubernetes_version`  | `1.18.6`                | Kubernetes version that will be installed                                                                                   | No  |
+| `feature_gates`       | ``                      | Add your own Feature Gates for Kubeadm                                                                                      | No  |
+| `calico_enabled`      | `false`                 | Installs Calico Network Provider after the master comes up                                                                  | No  |
+
+All variables cloud be passed through `environment variables` or a `tfvars` file.
+
+An example for a `tfvars` file would be the following `terraform.tfvars`
+
+```toml
+# terraform.tfvars
+hcloud_token = "<yourgeneratedtoken>"
+master_type = "cx21"
+master_count = 1
+node_type = "cx31"
+node_count = 2
+kubernetes_version = "1.18.6"
+docker_version = "19.03"
+```
+
+Or passing directly via Arguments
+
+```console
+$ terraform apply \
+  -var hcloud_token="<yourgeneratedtoken>" \
+  -var docker_version=19.03 \
+  -var kubernetes_version=1.18.6 \
+  -var master_type=cx21 \
+  -var master_count=1 \
+  -var node_type=cx31 \
+  -var node_count=2
+```
+
+
+## Contributing
+
+### Bug Reports & Feature Requests
+
+Please use the [issue tracker](https://github.com/solidnerd/terraform-k8s-hcloud/issues) to report any bugs or file feature requests.
+
+
+**Tested with**
+
+- Terraform [v0.12.24](https://github.com/hashicorp/terraform/tree/v0.12.24)
+- provider.hcloud [v1.19.0](https://github.com/terraform-providers/terraform-provider-hcloud)

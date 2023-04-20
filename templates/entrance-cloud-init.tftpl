@@ -9,12 +9,12 @@ users:
     passwd: ${user_passwd}
 package_update: true
 package_upgrade: true
+package_reboot_if_required: true
 packages:
   - apt-transport-https
   - curl
   - software-properties-common
   - vim
   - wget
-  - squid
 runcmd:
   - echo 'Hello, World!'

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 echo 'Hello, World3'
 #add kubernetes repository
@@ -15,5 +16,3 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.
 apt-get update
 apt-get -qq install -y helm
 apt-mark hold helm
-
-#configure bash autocompletion
