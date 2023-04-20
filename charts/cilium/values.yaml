@@ -114,10 +114,10 @@ rollOutCiliumPods: false
 image:
   override: ~
   repository: "quay.io/cilium/cilium"
-  tag: "v1.13.1"
+  tag: "v1.13.2"
   pullPolicy: "IfNotPresent"
   # cilium-digest
-  digest: "sha256:428a09552707cc90228b7ff48c6e7a33dc0a97fe1dd93311ca672834be25beda"
+  digest: "sha256:85708b11d45647c35b9288e0de0706d24a5ce8a378166cadc700f756cc1a38d6"
   useDigest: true
 
 # -- Affinity for cilium-agent.
@@ -965,7 +965,6 @@ hubble:
       #   kind: ClusterIssuer
       #   name: ca-issuer
       # -- certmanager issuer used when hubble.tls.auto.method=certmanager.
-      # If not specified, a CA issuer will be created.
       certManagerIssuerRef: {}
 
     # -- Deprecated in favor of tls.ca. To be removed in 1.13.
@@ -998,9 +997,9 @@ hubble:
     image:
       override: ~
       repository: "quay.io/cilium/hubble-relay"
-      tag: "v1.13.1"
+      tag: "v1.13.2"
        # hubble-relay-digest
-      digest: "sha256:ad7ce650c7877f8d769264e20bf5b9020ea778a9530cfae9d67a5c9d942c04cb"
+      digest: "sha256:51b772cab0724511583c3da3286439791dc67d7c35077fa30eaba3b5d555f8f4"
       useDigest: true
       pullPolicy: "IfNotPresent"
 
@@ -1199,7 +1198,7 @@ hubble:
       image:
         override: ~
         repository: "quay.io/cilium/hubble-ui-backend"
-        tag: "v0.10.0@sha256:cc5e2730b3be6f117b22176e25875f2308834ced7c3aa34fb598aa87a2c0a6a4"
+        tag: "v0.11.0@sha256:14c04d11f78da5c363f88592abae8d2ecee3cbe009f443ef11df6ac5f692d839"
         pullPolicy: "IfNotPresent"
 
       # -- Hubble-ui backend security context.
@@ -1228,7 +1227,7 @@ hubble:
       image:
         override: ~
         repository: "quay.io/cilium/hubble-ui"
-        tag: "v0.10.0@sha256:118ad2fcfd07fabcae4dde35ec88d33564c9ca7abe520aa45b1eb13ba36c6e0a"
+        tag: "v0.11.0@sha256:bcb369c47cada2d4257d63d3749f7f87c91dde32e010b223597306de95d1ecc8"
         pullPolicy: "IfNotPresent"
 
       # -- Hubble-ui frontend security context.
@@ -1320,6 +1319,11 @@ hubble:
       type: ClusterIP
       # --- The port to use when the service type is set to NodePort.
       nodePort: 31235
+
+    # -- Defines base url prefix for all hubble-ui http requests.
+    # It needs to be changed in case if ingress for hubble-ui is configured under some sub-path.
+    # Trailing `/` is required for custom path, ex. `/service-map/`
+    baseUrl: "/"
 
     # -- hubble-ui ingress configuration.
     ingress:
@@ -1844,15 +1848,15 @@ operator:
   image:
     override: ~
     repository: "quay.io/cilium/operator"
-    tag: "v1.13.1"
+    tag: "v1.13.2"
     # operator-generic-digest
-    genericDigest: "sha256:f47ba86042e11b11b1a1e3c8c34768a171c6d8316a3856253f4ad4a92615d555"
+    genericDigest: "sha256:a1982c0a22297aaac3563e428c330e17668305a41865a842dec53d241c5490ab"
     # operator-azure-digest
-    azureDigest: "sha256:b929e7a59f60e7ec306fe6f672546c6b217dffede4946b5f57130ced68d442e0"
+    azureDigest: "sha256:bfce3268bd32f1703ffb22339f9c306e99015585328a39b179c8ace72481a714"
     # operator-aws-digest
-    awsDigest: "sha256:f645832ef9cec19a8c3fb5ce13ece72175d2dcc5963374e8ac5ff31792cc6d58"
+    awsDigest: "sha256:94d5a291f80e2d568302b144d1d002fb1d43b436befed74a38f630fdc6d6f0c6"
     # operator-alibabacloud-digest
-    alibabacloudDigest: "sha256:e9a99cd02a80b8610fe7789c052e283df0622bf5e641d1fb88a1e22b86a82e02"
+    alibabacloudDigest: "sha256:8b5623a272c18ba823a4105308902cf1901fef494ccad85ab00791296fde4b3b"
     useDigest: true
     pullPolicy: "IfNotPresent"
     suffix: ""
@@ -2101,9 +2105,9 @@ preflight:
   image:
     override: ~
     repository: "quay.io/cilium/cilium"
-    tag: "v1.13.1"
+    tag: "v1.13.2"
     # cilium-digest
-    digest: "sha256:428a09552707cc90228b7ff48c6e7a33dc0a97fe1dd93311ca672834be25beda"
+    digest: "sha256:85708b11d45647c35b9288e0de0706d24a5ce8a378166cadc700f756cc1a38d6"
     useDigest: true
     pullPolicy: "IfNotPresent"
 
@@ -2248,9 +2252,9 @@ clustermesh:
     image:
       override: ~
       repository: "quay.io/cilium/clustermesh-apiserver"
-      tag: "v1.13.1"
+      tag: "v1.13.2"
       # clustermesh-apiserver-digest
-      digest: "sha256:84d386e6025b44125110547b853f166130407301362750235c90163aefc6ac3c"
+      digest: "sha256:4b07ac66d83dcf329252145f82c126705f291687d5b41161321220d115b7fee3"
       useDigest: true
       pullPolicy: "IfNotPresent"
 
@@ -2421,7 +2425,6 @@ clustermesh:
         #   kind: ClusterIssuer
         #   name: ca-issuer
         # -- certmanager issuer used when clustermesh.apiserver.tls.auto.method=certmanager.
-        # If not specified, a CA issuer will be created.
         certManagerIssuerRef: {}
       # -- base64 encoded PEM values for the ExternalWorkload CA certificate and private key.
       ca:
