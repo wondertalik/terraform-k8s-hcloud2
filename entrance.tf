@@ -116,3 +116,27 @@ resource "hcloud_server_network" "entrance_network" {
   subnet_id = hcloud_network_subnet.private_network_subnet.id
 }
 
+resource "null_resource" "init_charts" {
+  depends_on = [
+    hcloud_server_network.entrance_network
+  ]
+
+  connection {
+    host        = hcloud_server.entrance_server.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
+  }
+
+  provisioner "file" {
+    source      = "charts"
+    destination = "charts"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "K8S_HCLOUD_TOKEN=${var.k8s_hcloud_token} PRIVATE_NETWORK_ID=${hcloud_network.private_network.id} POD_NETWORK_CIDR=${var.pod_network_cidr} bash charts/init-k8s.sh"
+    ]
+  }
+}
