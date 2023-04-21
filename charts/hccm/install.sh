@@ -1,4 +1,4 @@
-# #!/usr/bin/bash
+#!/usr/bin/bash
 set -eu
 
 # #create secrets hcloud in k8s

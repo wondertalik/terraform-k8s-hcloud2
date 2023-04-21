@@ -1,7 +1,6 @@
 #!/bin/bash
 set -eu
 
-echo 'Hello, World3'
 #add kubernetes repository
 curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
@@ -14,5 +13,5 @@ curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyr
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
 
 apt-get update
-apt-get -qq install -y helm
+apt-get -qq install -y helm=3.11.3-1
 apt-mark hold helm

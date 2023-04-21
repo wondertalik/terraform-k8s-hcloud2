@@ -130,3 +130,8 @@ variable "hccm_enabled" {
   type    = bool
   default = true
 }
+
+variable "metric_server_enabled" {
+  type    = bool
+  default = true
+}

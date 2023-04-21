@@ -20,7 +20,7 @@ resource "null_resource" "cilium" {
 
   provisioner "remote-exec" {
     inline = [
-      "bash charts/cilium/init-cilium.sh"
+      "bash charts/cilium/install.sh"
     ]
   }
 
@@ -51,7 +51,38 @@ resource "null_resource" "hccm" {
 
   provisioner "remote-exec" {
     inline = [
-      "K8S_HCLOUD_TOKEN=${var.k8s_hcloud_token} PRIVATE_NETWORK_ID=${hcloud_network.private_network.id} POD_NETWORK_CIDR=${var.pod_network_cidr} bash charts/hccm/init-hccm.sh"
+      "K8S_HCLOUD_TOKEN=${var.k8s_hcloud_token} PRIVATE_NETWORK_ID=${hcloud_network.private_network.id} POD_NETWORK_CIDR=${var.pod_network_cidr} bash charts/hccm/install.sh"
+    ]
+  }
+
+  depends_on = [
+    hcloud_server_network.entrance_network
+  ]
+}
+
+resource "null_resource" "metric_server" {
+  count = var.metric_server_enabled ? 1 : 0
+
+  connection {
+    host        = hcloud_server.entrance_server.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = ["mkdir -p charts"]
+  }
+
+  provisioner "file" {
+    source      = "charts/metrics-server"
+    destination = "charts"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "bash charts/metrics-server/install.sh"
     ]
   }
 
