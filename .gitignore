@@ -2,6 +2,7 @@
 .terraform/
 *.tfvars
 secrets/
-terraform.tfstate
-terraform.tfstate.backup
+terraform.tfstate*
 *.plan
+.auto.tfvars
+.terraform.*

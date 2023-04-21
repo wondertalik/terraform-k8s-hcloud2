@@ -120,3 +120,13 @@ variable "custom_ssh_port" {
   type    = number
   default = 22
 }
+
+variable "cilium_enabled" {
+  type    = bool
+  default = true
+}
+
+variable "hccm_enabled" {
+  type    = bool
+  default = true
+}
