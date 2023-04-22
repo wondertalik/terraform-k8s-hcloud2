@@ -5,6 +5,8 @@ set -eu
 echo "source <(kubectl completion bash)" >> .bashrc
 echo "complete -o default -F __start_kubectl k" >> .bashrc
 echo "alias k=kubectl" >> .bash_aliases
+echo "source <(cilium completion bash)" >> .bashrc
+echo "source <(helm completion bash)" >> .bashrc
 
 #https://github.com/jonmosco/kube-ps1
 # echo "source .my-settings/kube-ps1.sh" >> .bashrc
