@@ -4,13 +4,13 @@ provider "hcloud" {
 
 # create ssh-key for entrance
 resource "hcloud_ssh_key" "hetzner_entrance_key" {
-  name       = var.ssh_private_key_entrance_name
+  name       = var.ssh_private_key_entrance_hcloud
   public_key = file(var.ssh_public_key_entrance)
 }
 
 # create ssh-key for nodes
 resource "hcloud_ssh_key" "hetzner_nodes_key" {
-  name       = var.ssh_private_key_nodes_name
+  name       = var.ssh_private_key_nodes_hcloud
   public_key = file(var.ssh_public_key_nodes)
 }
 
@@ -43,7 +43,7 @@ resource "hcloud_network_subnet" "private_network_subnet" {
 
 resource "hcloud_load_balancer" "master_load_balancer" {
   name               = "load-balancer-masters"
-  load_balancer_type = var.load_balancer_type
+  load_balancer_type = var.master_load_balancer_type
   location           = var.location
 
   labels = {
@@ -77,9 +77,3 @@ resource "hcloud_load_balancer_service" "master_load_balancer_service" {
   listen_port      = 6443
   destination_port = 6443
 }
-
-
-# output "name" {
-#   value = data.cloudinit_config.cloud_init_node.rendered
-#   sensitive = true
-# }

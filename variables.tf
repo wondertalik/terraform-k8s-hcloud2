@@ -59,22 +59,21 @@ variable "master_count" {
 variable "worker_count" {
 }
 
-variable "ssh_private_key_entrance_name" {
+variable "ssh_private_key_entrance_hcloud" {
   description = "Name of the ssh key in hcloud for entrance"
-  default     = "key_hetzner_entrance"
+  default     = "id_hetzner_entrance"
 }
 
 variable "ssh_private_key_entrance" {
-  description = "Private Key to access the machines"
-  default     = "~/.ssh/id_ed25519"
+  description = "Private Key to authorized the access for the entrance server"
 }
 
 variable "ssh_public_key_entrance" {
-  description = "Public Key to authorized the access for the machines"
+  description = "Public Key to authorized the access for the entrance server"
 }
 
-variable "ssh_private_key_nodes_name" {
-  description = "Name of the ssh key in hcloud for nodes"
+variable "ssh_private_key_nodes_hcloud" {
+  description = "Name of the ssh key in hcloud for the machines"
   default     = "key_hetzner_nodes"
 }
 
@@ -100,7 +99,7 @@ variable "load_balancer_master_private_ip" {
   default = "10.98.0.2"
 }
 
-variable "load_balancer_type" {
+variable "master_load_balancer_type" {
   default = "lb11"
 }
 
@@ -118,7 +117,7 @@ variable "kubernetes_version" {
 
 variable "custom_ssh_port" {
   type    = number
-  default = 22
+  default = 29351
 }
 
 variable "cilium_enabled" {
