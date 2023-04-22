@@ -4,13 +4,14 @@ This repository will help to setup an opionated Kubernetes Cluster with [kubeadm
 
 ## Usage
 
-# Install and configure hcloud
+# Terraform
+
+- Install [terraform cli](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 
 ## Create hetzner project
 
 1. Open [console](https://console.hetzner.cloud) and create [project](https://docs.hetzner.com/cloud/general/faq). Next will be used  `k8s-dev-stand` name
 2. Create [api token](https://docs.hetzner.com/cloud/api/getting-started/generating-api-token) with permissions *Read & Write* from projet `k8s-dev-stand`
-3. Install [terraform cli](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 
 ### Generate ssh-keys for servers
 

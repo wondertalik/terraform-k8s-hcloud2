@@ -133,3 +133,226 @@ resource "hcloud_server_network" "worker_network" {
   server_id = hcloud_server.worker[count.index].id
   subnet_id = hcloud_network_subnet.private_network_subnet.id
 }
+
+resource "hcloud_firewall" "firewall_masters" {
+  name = "firewall-masters"
+
+  rule {
+    direction = "in"
+    protocol  = "icmp"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = 6443
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "2379-2380"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = 10250
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = 10259
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = 10257
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = 4240
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "udp"
+    port      = 8472
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "8080-8081"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "4244-4245"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "udp"
+    port      = 53
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "30000-32767"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = var.custom_ssh_port
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  apply_to {
+    label_selector = "type=master-node"
+  }
+}
+
+resource "hcloud_firewall" "firewall_workers" {
+  name = "firewall-workers"
+
+  rule {
+    direction = "in"
+    protocol  = "icmp"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = 10250
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = 4240
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "udp"
+    port      = 8472
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "8080-8081"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "4244-4245"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "udp"
+    port      = 53
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "30000-32767"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+    rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = 443
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = var.custom_ssh_port
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  apply_to {
+    label_selector = "type=worker-node"
+  }
+}

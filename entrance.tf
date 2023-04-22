@@ -35,6 +35,38 @@ data "cloudinit_config" "cloud_init_entrance" {
   }
 }
 
+resource "null_resource" "firewalls" {
+  depends_on = [
+    hcloud_server.master,
+    hcloud_server.worker,
+    null_resource.init_masters,
+    null_resource.init_workers,
+    hcloud_server.entrance_server,
+  ]
+}
+
+
+resource "hcloud_firewall" "firewall_entrance" {
+  name = "firewall-entrance"
+  rule {
+    direction = "in"
+    protocol  = "icmp"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = var.custom_ssh_port
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+}
 
 # create entrance server
 resource "hcloud_server" "entrance_server" {
@@ -43,6 +75,7 @@ resource "hcloud_server" "entrance_server" {
   server_type        = var.entrance_type
   location           = var.location
   placement_group_id = hcloud_placement_group.placement_cluster.id
+  firewall_ids       = [hcloud_firewall.firewall_entrance.id]
 
   ssh_keys = [
     hcloud_ssh_key.hetzner_entrance_key.id,
