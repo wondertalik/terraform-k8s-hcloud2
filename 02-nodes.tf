@@ -134,6 +134,58 @@ resource "hcloud_server_network" "worker_network" {
   subnet_id = hcloud_network_subnet.private_network_subnet.id
 }
 
+
+
+resource "hcloud_server" "ingress" {
+  count              = var.ingress_count
+  name               = "ingress-${var.location}-${count.index + 1}"
+  image              = var.ingress_image
+  server_type        = var.ingress_type
+  location           = var.location
+  placement_group_id = hcloud_placement_group.placement_cluster.id
+
+  ssh_keys = [
+    hcloud_ssh_key.hetzner_nodes_key.id,
+  ]
+  user_data = data.cloudinit_config.cloud_init_nodes.rendered
+
+  public_net {
+    ipv4_enabled = true
+    ipv6_enabled = true
+  }
+
+  connection {
+    host        = self.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_nodes)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "cloud-init status --wait"
+    ]
+  }
+
+  labels = {
+    "source" = "k8s-dev"
+    "type"   = "ingress-node"
+  }
+}
+
+resource "hcloud_server_network" "ingress_network" {
+  count = var.ingress_count
+  depends_on = [
+    hcloud_server.ingress,
+    hcloud_network_subnet.private_network_subnet
+  ]
+  server_id = hcloud_server.ingress[count.index].id
+  subnet_id = hcloud_network_subnet.private_network_subnet.id
+}
+
+
+
 resource "hcloud_firewall" "firewall_masters" {
   name = "firewall-masters"
 
@@ -363,6 +415,6 @@ resource "hcloud_firewall" "firewall_workers" {
     ]
   }
   apply_to {
-    label_selector = "type=worker-node"
+    label_selector = "type=worker-node,type=ingress-node"
   }
 }

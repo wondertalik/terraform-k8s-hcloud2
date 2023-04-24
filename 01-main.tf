@@ -77,3 +77,52 @@ resource "hcloud_load_balancer_service" "master_load_balancer_service" {
   listen_port      = 6443
   destination_port = 6443
 }
+
+
+resource "hcloud_load_balancer" "ingress_load_balancer" {
+  count              = var.ingress_enabled ? 1 : 0
+  name               = "load-balancer-ingreses"
+  load_balancer_type = var.ingress_load_balancer_type
+  location           = var.location
+
+  labels = {
+    "type" = "load-balancer-ingreses"
+  }
+}
+
+resource "hcloud_load_balancer_network" "ingress_load_balancer_network" {
+  count = var.ingress_enabled ? 1 : 0
+  depends_on = [
+    hcloud_network_subnet.private_network_subnet
+  ]
+  load_balancer_id        = hcloud_load_balancer.ingress_load_balancer[count.index].id
+  subnet_id               = hcloud_network_subnet.private_network_subnet.id
+  enable_public_interface = true
+}
+
+resource "hcloud_load_balancer_target" "ingress_load_balancer_target" {
+  count = var.ingress_enabled ? 1 : 0
+  depends_on = [
+    hcloud_load_balancer_network.ingress_load_balancer_network
+  ]
+  type             = "label_selector"
+  load_balancer_id = hcloud_load_balancer.ingress_load_balancer[count.index].id
+  label_selector   = "type=ingress-node"
+  use_private_ip   = true
+}
+
+resource "hcloud_load_balancer_service" "ingress_https_load_balancer_service" {
+  count            = var.ingress_enabled ? 1 : 0
+  load_balancer_id = hcloud_load_balancer.ingress_load_balancer[count.index].id
+  protocol         = "tcp"
+  listen_port      = 443
+  destination_port = 443
+}
+
+resource "hcloud_load_balancer_service" "ingress_http_load_balancer_service" {
+  count            = var.ingress_enabled ? 1 : 0
+  load_balancer_id = hcloud_load_balancer.ingress_load_balancer[count.index].id
+  protocol         = "tcp"
+  listen_port      = 80
+  destination_port = 80
+}

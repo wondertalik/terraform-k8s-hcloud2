@@ -28,6 +28,11 @@ variable "worker_type" {
   default     = "cx21"
 }
 
+variable "ingress_type" {
+  description = "For more types have a look at https://www.hetzner.de/cloud"
+  default     = "cx21"
+}
+
 variable "network_zone" {
   description = "Predefined network zone"
   default     = "eu-central"
@@ -53,10 +58,21 @@ variable "worker_image" {
   default     = "ubuntu-22.04"
 }
 
+variable "ingress_image" {
+  description = "Predefined Image that will be used to spin up the machines (Currently supported: ubuntu-22.04, ubuntu-20.04, ubuntu-18.04)"
+  default     = "ubuntu-22.04"
+}
+
 variable "master_count" {
+  default = 3
 }
 
 variable "worker_count" {
+  default = 2
+}
+
+variable "ingress_count" {
+  default = 1
 }
 
 variable "ssh_private_key_entrance_hcloud" {
@@ -103,6 +119,10 @@ variable "master_load_balancer_type" {
   default = "lb11"
 }
 
+variable "ingress_load_balancer_type" {
+  default = "lb11"
+}
+
 variable "pod_network_cidr" {
   default = "172.16.0.0/16"
 }
@@ -118,6 +138,11 @@ variable "kubernetes_version" {
 variable "custom_ssh_port" {
   type    = number
   default = 29351
+}
+
+variable "ingress_enabled" {
+  type    = bool
+  default = true
 }
 
 variable "cilium_enabled" {

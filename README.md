@@ -55,6 +55,9 @@ $ terraform apply "k8s-dev-stand.plan"
 | `worker_count`                    | `1`                   | Amount of workers that will be created                                                                                                                   |    No    |
 | `worker_image`                    | `ubuntu-22.04`        | Predefined Image that will be used to spin up the machines (Currently supported: ubuntu-22.04, ubuntu-20.04, ubuntu-18.04)                               |    No    |
 | `worker_type`                     | `cx41`                | Machine type for more types have a look at https://www.hetzner.de/cloud                                                                                  |    No    |
+| `ingress_count`                   | `1`                   | Amount of ingress-nginx that will be created                                                                                                             |    No    |
+| `ingress_image`                   | `ubuntu-22.04`        | Predefined Image that will be used to spin up the machines (Currently supported: ubuntu-22.04, ubuntu-20.04, ubuntu-18.04)                               |    No    |
+| `ingress_type`                    | `cx21`                | Machine type for more types have a look at https://www.hetzner.de/cloud                                                                                  |    No    |
 | `entrance_image`                  | `ubuntu-22.04`        | Predefined Image that will be used to spin up the machines (Currently supported: ubuntu-22.04, ubuntu-20.04, ubuntu-18.04)                               |    No    |
 | `entrance_type`                   | `cx11`                | Machine type for more types have a look at https://www.hetzner.de/cloud                                                                                  |    No    |
 | `ssh_private_key_entrance_hcloud` | `id_hetzner_entrance` | Name of the ssh key in hcloud for entrance server                                                                                                        |    No    |
@@ -75,6 +78,7 @@ $ terraform apply "k8s-dev-stand.plan"
 | `containerd_version`              | `1.7.0`               | Version of containerd (container runtimes)                                                                                                               |    No    |
 | `cilium_enabled`                  | `true`                | Installs Cilium Network Provider after the master comes up                                                                                               |    No    |
 | `hccm_enabled`                    | `true`                | Installs Hetzner Cloud Provider after the master comes up                                                                                                |    No    |
+| `ingress_enabled`                 | `true`                | Installs Ingress-Nginx after the ingress nodes comes up                                                                                                  |    No    |
 | `metric_server_enabled`           | `true`                | Installs Metrics Server after the master comes up                                                                                                        |    No    |
 | `metric_server_enabled`           | `true`                | Installs Metrics Server after the master comes up                                                                                                        |    No    |
 

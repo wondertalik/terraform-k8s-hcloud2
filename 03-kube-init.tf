@@ -120,7 +120,7 @@ resource "null_resource" "init_workers" {
   }
 
   provisioner "remote-exec" {
-    inline = ["MASTER_INDEX=${count.index} bash scripts/kube-node.sh"]
+    inline = ["bash scripts/kube-node.sh"]
   }
 
   provisioner "remote-exec" {
@@ -132,3 +132,42 @@ resource "null_resource" "init_workers" {
 
 }
 
+resource "null_resource" "init_ingreses" {
+  depends_on = [null_resource.init_masters]
+  count      = var.ingress_count
+  connection {
+    host        = hcloud_server.ingress[count.index].ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_nodes)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p scripts"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "scripts/kube-node.sh"
+    destination = "scripts/kube-node.sh"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/secrets/kubeadm_join"
+    destination = "/tmp/kubeadm_join"
+  }
+
+  provisioner "remote-exec" {
+    inline = ["bash scripts/kube-node.sh"]
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "rm /tmp/kubeadm_join",
+      "rm -rf scripts"
+    ]
+  }
+
+}

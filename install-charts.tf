@@ -91,3 +91,34 @@ resource "null_resource" "metric_server" {
   ]
 }
 
+resource "null_resource" "ingress-nginx" {
+  count = var.ingress_enabled ? 1 : 0
+
+  connection {
+    host        = hcloud_server.entrance_server.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = ["mkdir -p charts"]
+  }
+
+  provisioner "file" {
+    source      = "charts/ingress-nginx"
+    destination = "charts"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "NODE_NAME=ingress-${var.location} NODE_COUNT=${var.ingress_count} bash charts/ingress-nginx/install.sh"
+    ]
+  }
+
+  depends_on = [
+    hcloud_server_network.entrance_network
+  ]
+}
+
