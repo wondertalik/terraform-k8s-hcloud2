@@ -84,6 +84,7 @@ resource "hcloud_load_balancer" "ingress_load_balancer" {
   name               = "load-balancer-ingreses"
   load_balancer_type = var.ingress_load_balancer_type
   location           = var.location
+  delete_protection  = true
 
   labels = {
     "type" = "load-balancer-ingreses"
