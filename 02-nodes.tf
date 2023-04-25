@@ -35,7 +35,8 @@ data "cloudinit_config" "cloud_init_nodes" {
 # create masters server
 resource "hcloud_server" "master" {
   depends_on = [
-    hcloud_load_balancer.master_load_balancer
+    hcloud_load_balancer.master_load_balancer,
+    hcloud_load_balancer_network.master_load_balancer_network
   ]
   count              = var.master_count
   name               = "master-${var.location}-${count.index + 1}"
@@ -133,7 +134,6 @@ resource "hcloud_server_network" "worker_network" {
   server_id = hcloud_server.worker[count.index].id
   subnet_id = hcloud_network_subnet.private_network_subnet.id
 }
-
 
 
 resource "hcloud_server" "ingress" {

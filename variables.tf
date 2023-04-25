@@ -159,3 +159,11 @@ variable "metric_server_enabled" {
   type    = bool
   default = true
 }
+
+variable "cert_manager_enabled" {
+  type    = bool
+  default = true
+}
+
+variable "cert_manager_acme_email" {
+}

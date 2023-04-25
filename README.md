@@ -35,10 +35,10 @@ ssh-keygen -t ed25519 -C "your_email@example.com" -f ~/.ssh/id_hetzner_nodes
 # How to use
 
 ```sh
-$ git clone https://github.com/wondertalik/terraform-k8s-hcloud
-$ terraform init
-$ terraform plan -out="k8s-dev-stand.plan"
-$ terraform apply "k8s-dev-stand.plan"
+git clone https://github.com/wondertalik/terraform-k8s-hcloud
+terraform init
+terraform plan -out="k8s-dev-stand.plan"
+terraform apply "k8s-dev-stand.plan"
 ```
 
 ## Variables

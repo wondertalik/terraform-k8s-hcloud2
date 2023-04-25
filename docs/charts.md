@@ -41,3 +41,26 @@ helm upgrade --install ingress-nginx charts/ingress-nginx/src/ingress-nginx -f c
 ```
 helm uninstall ingress-nginx -n ingress-nginx
 ```
+
+## cert-manager
+
+### Download source chart
+```
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+helm pull jetstack/cert-manager --untar -d charts/cert-manager --untardir src
+helm show values jetstack/cert-manager > charts/cert-manager/values.yaml
+```
+
+### Install chart from directory
+
+```
+helm upgrade --install ingress-nginx charts/ingress-nginx/src/ingress-nginx -f charts/ingress-nginx/values.yaml --namespace ingress-nginx --create-namespace
+```
+
+### Uninstall
+
+```
+helm uninstall cert-manager -n cert-manager
+kubectl delete namespace cert-manager
+```
