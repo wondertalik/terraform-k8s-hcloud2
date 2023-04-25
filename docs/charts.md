@@ -1,5 +1,27 @@
 # Helm charts
- 
+
+## metric-server
+
+### Download source chart
+```
+helm repo add cilium https://helm.cilium.io/
+helm pull metrics-server/metrics-server --untar -d charts/metrics-server --untardir src
+helm repo update
+helm show values metrics-server/metrics-server > charts/metrics-server/values.yaml
+```
+
+### Install chart from directory
+
+```
+helm upgrade --install metrics-server charts/metrics-server/src/metrics-server -f charts/metrics-server/values.yaml  --set args={--kubelet-insecure-tls} --namespace kube-system
+```
+
+### Uninstall
+
+```
+helm uninstall cilium -n kube-system
+```
+
 ## metric-server
 
 ### Download source chart

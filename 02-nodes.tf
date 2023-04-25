@@ -35,7 +35,6 @@ data "cloudinit_config" "cloud_init_nodes" {
 # create masters server
 resource "hcloud_server" "master" {
   depends_on = [
-    hcloud_load_balancer.master_load_balancer,
     hcloud_load_balancer_network.master_load_balancer_network
   ]
   count              = var.master_count
@@ -76,11 +75,11 @@ resource "hcloud_server" "master" {
 }
 
 resource "hcloud_server_network" "master_network" {
-  count = var.master_count
   depends_on = [
     hcloud_server.master,
     hcloud_network_subnet.private_network_subnet
   ]
+  count     = var.master_count
   server_id = hcloud_server.master[count.index].id
   subnet_id = hcloud_network_subnet.private_network_subnet.id
 }
@@ -126,11 +125,11 @@ resource "hcloud_server" "worker" {
 }
 
 resource "hcloud_server_network" "worker_network" {
-  count = var.worker_count
   depends_on = [
     hcloud_server.worker,
-    hcloud_network_subnet.private_network_subnet
+    hcloud_load_balancer_network.master_load_balancer_network
   ]
+  count     = var.worker_count
   server_id = hcloud_server.worker[count.index].id
   subnet_id = hcloud_network_subnet.private_network_subnet.id
 }
@@ -175,11 +174,11 @@ resource "hcloud_server" "ingress" {
 }
 
 resource "hcloud_server_network" "ingress_network" {
-  count = var.ingress_count
   depends_on = [
     hcloud_server.ingress,
-    hcloud_network_subnet.private_network_subnet
+    hcloud_load_balancer_network.master_load_balancer_network
   ]
+  count     = var.ingress_count
   server_id = hcloud_server.ingress[count.index].id
   subnet_id = hcloud_network_subnet.private_network_subnet.id
 }

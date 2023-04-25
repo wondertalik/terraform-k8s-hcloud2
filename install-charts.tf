@@ -20,7 +20,7 @@ resource "null_resource" "cilium" {
 
   provisioner "remote-exec" {
     inline = [
-      "bash charts/cilium/install.sh"
+      "MASTER_COUNT=${var.master_count} bash charts/cilium/install.sh"
     ]
   }
 

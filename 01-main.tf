@@ -94,6 +94,7 @@ resource "hcloud_load_balancer" "ingress_load_balancer" {
 resource "hcloud_load_balancer_network" "ingress_load_balancer_network" {
   count = var.ingress_enabled ? 1 : 0
   depends_on = [
+    hcloud_load_balancer_network.master_load_balancer_network,
     hcloud_network_subnet.private_network_subnet
   ]
   load_balancer_id        = hcloud_load_balancer.ingress_load_balancer[count.index].id

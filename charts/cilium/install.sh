@@ -3,14 +3,15 @@ set -eu
 
 #install cilium from charts directory
 helm upgrade --install cilium charts/cilium/src/cilium -f charts/cilium/values.yaml \
-   --namespace kube-system    --reuse-values \
+   --namespace kube-system \
+   --set operator.replicas=$MASTER_COUNT \
    --set hubble.relay.enabled=true \
    --set hubble.ui.enabled=true
 
 # install cilium cli tools
 ARCH=amd64
 if [ "$(uname -m)" = "aarch64" ]; then ARCH=arm64; fi
-curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/v0.13.2/cilium-linux-${ARCH}.tar.gz{,.sha256sum}
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/v0.14.0/cilium-linux-${ARCH}.tar.gz{,.sha256sum}
 sha256sum --check cilium-linux-${ARCH}.tar.gz.sha256sum
 sudo tar xzvfC cilium-linux-${ARCH}.tar.gz /usr/local/bin
 rm cilium-linux-${ARCH}.tar.gz{,.sha256sum}
