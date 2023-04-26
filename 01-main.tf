@@ -107,9 +107,7 @@ resource "hcloud_load_balancer_target" "ingress_load_balancer_target" {
   depends_on = [
     hcloud_load_balancer_network.ingress_load_balancer_network
   ]
-  type             = "label_selector"
   load_balancer_id = hcloud_load_balancer.ingress_load_balancer[count.index].id
-  label_selector   = "type=ingress-node"
   use_private_ip   = true
 }
 

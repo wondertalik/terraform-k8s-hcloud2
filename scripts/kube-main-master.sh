@@ -1,7 +1,11 @@
 #!/usr/bin/bash
 set -eu
 
-sudo kubeadm init --pod-network-cidr="$POD_NETWORK_CIDR" --control-plane-endpoint=$CONTROL_PLANE_ENDPOINT:6443 --cri-socket unix:///run/containerd/containerd.sock --upload-certs --apiserver-advertise-address $APISERVER_ADVERTISE_ADDRESS --apiserver-cert-extra-sans $APISERVER_CERT_EXTRA_SANS --v=5
+sudo kubeadm init \
+    --pod-network-cidr="$POD_NETWORK_CIDR" \
+    --control-plane-endpoint=$CONTROL_PLANE_ENDPOINT:6443 \
+    --cri-socket unix:///run/containerd/containerd.sock \
+    --upload-certs --v=5 \
 
 # used to join nodes to the cluster
 sudo mkdir -p /tmp/kubeadm

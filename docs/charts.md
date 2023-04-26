@@ -26,6 +26,7 @@ helm uninstall cilium -n kube-system
 
 ### Download source chart
 ```
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
 helm pull metrics-server/metrics-server --untar -d charts/metrics-server --untardir src
 helm repo update
 helm show values metrics-server/metrics-server > charts/metrics-server/values.yaml
@@ -48,6 +49,9 @@ helm uninstall metrics-server -n kube-system
 
 ### Download source chart
 ```
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
 helm pull ingress-nginx/ingress-nginx --untar -d charts/ingress-nginx --untardir src
 helm show values ingress-nginx/ingress-nginx > charts/ingress-nginx/values.yaml
 ```
