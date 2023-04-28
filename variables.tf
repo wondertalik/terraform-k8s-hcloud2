@@ -157,7 +157,7 @@ variable "hccm_enabled" {
 
 variable "metric_server_enabled" {
   type    = bool
-  default = false
+  default = true
 }
 
 variable "cert_manager_enabled" {
