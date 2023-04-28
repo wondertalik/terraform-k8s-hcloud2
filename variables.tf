@@ -124,7 +124,7 @@ variable "ingress_load_balancer_type" {
 }
 
 variable "pod_network_cidr" {
-  default = "172.16.0.0/16"
+  default = "10.244.0.0/16"
 }
 
 variable "containerd_version" {
@@ -162,7 +162,7 @@ variable "metric_server_enabled" {
 
 variable "cert_manager_enabled" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "cert_manager_acme_email" {

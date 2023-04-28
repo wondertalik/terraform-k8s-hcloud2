@@ -37,3 +37,26 @@ spec:
 EOF
 
 kubectl apply -f letsencrypt-prod.yaml
+
+cat <<EOF | sudo tee letsencrypt-staging.yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: $ACME_EMAIL
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    # Enable the HTTP-01 challenge provider
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+EOF
+
+kubectl apply -f letsencrypt-staging.yaml

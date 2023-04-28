@@ -1,7 +1,3 @@
-# output "node_ips" {
-#   value = [hcloud_server.node.*.ipv4_address]
-# }
-
 output "entrance_ips" {
   value = [hcloud_server.entrance_server.*.ipv4_address]
 }
@@ -12,6 +8,10 @@ output "master_ips" {
 
 output "workers_ips" {
   value = [hcloud_server.worker.*.ipv4_address]
+}
+
+output "ingresses_ips" {
+  value = [hcloud_server.ingress.*.ipv4_address]
 }
 
 output "network_id" {

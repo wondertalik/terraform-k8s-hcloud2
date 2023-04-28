@@ -41,6 +41,7 @@ resource "null_resource" "firewalls" {
     hcloud_server.worker,
     null_resource.init_masters,
     null_resource.init_workers,
+    null_resource.init_ingreses,
     hcloud_server.entrance_server,
   ]
 }
@@ -105,8 +106,13 @@ resource "hcloud_server" "entrance_server" {
   provisioner "remote-exec" {
     inline = [
       "mkdir -p .my-settings",
-      "mkdir -p .kube"
+      "mkdir -p .kube",
     ]
+  }
+
+  provisioner "file" {
+    source      = "demo"
+    destination = "demo"
   }
 
   provisioner "file" {
@@ -137,7 +143,7 @@ resource "hcloud_server" "entrance_server" {
   }
 
   depends_on = [
-    null_resource.init_workers,
+    null_resource.init_masters,
   ]
 }
 

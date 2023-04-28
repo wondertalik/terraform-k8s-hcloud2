@@ -97,10 +97,4 @@ swapoff -a
 sed -i "s/\/swap.img    none    swap    sw      0       0//" /etc/fstab
 mount -a
 
-mkdir -p /etc/systemd/system/kubelet.service.d
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service.d/20-hcloud.conf
-[Service]
-Environment="KUBELET_EXTRA_ARGS=--cloud-provider=external"
-EOF
-
 kubeadm config images pull

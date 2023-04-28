@@ -1,12 +1,17 @@
 #!/usr/bin/bash
-set -eu
+set -eux
 
 #install cilium from charts directory
 helm upgrade --install cilium charts/cilium/src/cilium -f charts/cilium/values.yaml \
    --namespace kube-system \
    --set operator.replicas=$MASTER_COUNT \
    --set hubble.relay.enabled=true \
-   --set hubble.ui.enabled=true
+   --set hubble.ui.enabled=true \
+   # --set tunnel=disabled \
+   # --set ipv4NativeRoutingCIDR=$POD_NETWORK_CIDR \
+   # --set ipam.mode=kubernetes
+
+kubectl -n kube-system patch ds cilium --type json -p '[{"op":"add","path":"/spec/template/spec/tolerations/-","value":{"key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true","effect":"NoSchedule"}}]'
 
 # install cilium cli tools
 ARCH=amd64
