@@ -7,12 +7,12 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 
 spec:
-  tls:
-  - hosts:
-    - relay.sucapp.com
-    secretName: quickstart-example-tls
+  # tls:
+  # - hosts:
+  #   - example.com
+  #   secretName: quickstart-example-tls
   rules:
-  - host: realy.sucapp.com
+  - host: example.com
     http:
       paths:
       - path: /

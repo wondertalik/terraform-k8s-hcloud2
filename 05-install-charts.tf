@@ -1,34 +1,3 @@
-resource "null_resource" "cilium" {
-  count = var.cilium_enabled ? 1 : 0
-
-  connection {
-    host        = hcloud_server.entrance_server.ipv4_address
-    port        = var.custom_ssh_port
-    type        = "ssh"
-    private_key = file(var.ssh_private_key_entrance)
-    user        = var.user_name
-  }
-
-  provisioner "remote-exec" {
-    inline = ["mkdir -p charts"]
-  }
-
-  provisioner "file" {
-    source      = "charts/cilium"
-    destination = "charts"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "MASTER_COUNT=${var.master_count} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} bash charts/cilium/install.sh"
-    ]
-  }
-
-  depends_on = [
-    hcloud_server_network.entrance_network
-  ]
-}
-
 resource "null_resource" "hccm" {
   count = var.hccm_enabled ? 1 : 0
 
@@ -56,66 +25,41 @@ resource "null_resource" "hccm" {
   }
 
   depends_on = [
+    hcloud_server_network.entrance_network
+  ]
+}
+
+resource "null_resource" "cilium" {
+  count = var.cilium_enabled ? 1 : 0
+
+  connection {
+    host        = hcloud_server.entrance_server.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = ["mkdir -p charts"]
+  }
+
+  provisioner "file" {
+    source      = "charts/cilium"
+    destination = "charts"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "MASTER_COUNT=${var.master_count} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} bash charts/cilium/install.sh",
+      "echo \"source <(cilium completion bash)\" >> .bashrc"
+    ]
+  }
+
+  depends_on = [
     hcloud_server_network.entrance_network,
-    null_resource.cilium
-  ]
-}
-
-resource "null_resource" "post_restart_masters" {
-  depends_on = [
-    null_resource.cilium,
     null_resource.hccm
   ]
-  count = var.master_count
-  connection {
-    host        = hcloud_server.master[count.index].ipv4_address
-    port        = var.custom_ssh_port
-    type        = "ssh"
-    private_key = file(var.ssh_private_key_nodes)
-    user        = var.user_name
-  }
-
-  provisioner "remote-exec" {
-    inline = ["sudo systemctl daemon-reload && sudo systemctl restart kubelet"]
-  }
-}
-
-resource "null_resource" "post_restart_workers" {
-  depends_on = [
-    null_resource.cilium,
-    null_resource.hccm
-  ]
-  count = var.worker_count
-  connection {
-    host        = hcloud_server.worker[count.index].ipv4_address
-    port        = var.custom_ssh_port
-    type        = "ssh"
-    private_key = file(var.ssh_private_key_nodes)
-    user        = var.user_name
-  }
-
-  provisioner "remote-exec" {
-    inline = ["sudo systemctl daemon-reload && sudo systemctl restart kubelet"]
-  }
-}
-
-resource "null_resource" "post_restart_ingresses" {
-  depends_on = [
-    null_resource.cilium,
-    null_resource.hccm
-  ]
-  count = var.ingress_count
-  connection {
-    host        = hcloud_server.ingress[count.index].ipv4_address
-    port        = var.custom_ssh_port
-    type        = "ssh"
-    private_key = file(var.ssh_private_key_nodes)
-    user        = var.user_name
-  }
-
-  provisioner "remote-exec" {
-    inline = ["sudo systemctl daemon-reload && sudo systemctl restart kubelet"]
-  }
 }
 
 resource "null_resource" "metric_server" {
@@ -176,7 +120,9 @@ resource "null_resource" "ingress_nginx" {
   }
 
   depends_on = [
-    hcloud_server_network.entrance_network
+    hcloud_server_network.entrance_network,
+    null_resource.cilium,
+    null_resource.hccm,
   ]
 }
 
@@ -209,6 +155,63 @@ resource "null_resource" "cert_manager" {
   depends_on = [
     hcloud_server_network.entrance_network
   ]
+}
+
+resource "null_resource" "post_restart_masters" {
+  depends_on = [
+    null_resource.cilium,
+    null_resource.hccm
+  ]
+  count = var.master_count
+  connection {
+    host        = hcloud_server.master[count.index].ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_nodes)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = ["sudo systemctl daemon-reload && sudo systemctl restart kubelet"]
+  }
+}
+
+resource "null_resource" "post_restart_workers" {
+  depends_on = [
+    null_resource.cilium,
+    null_resource.hccm
+  ]
+  count = var.worker_count
+  connection {
+    host        = hcloud_server.worker[count.index].ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_nodes)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = ["sudo systemctl daemon-reload && sudo systemctl restart kubelet"]
+  }
+}
+
+resource "null_resource" "post_restart_ingresses" {
+  depends_on = [
+    null_resource.cilium,
+    null_resource.hccm
+  ]
+  count = var.ingress_count
+  connection {
+    host        = hcloud_server.ingress[count.index].ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_nodes)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = ["sudo systemctl daemon-reload && sudo systemctl restart kubelet"]
+  }
 }
 
 

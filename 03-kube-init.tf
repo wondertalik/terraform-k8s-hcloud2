@@ -1,4 +1,35 @@
+resource "null_resource" "pre_init_masters" {
+  depends_on = [
+    hcloud_load_balancer_network.master_load_balancer_network,
+    hcloud_server_network.master_network
+  ]
+  count = var.master_count
+
+  connection {
+    host        = hcloud_server.master[count.index].ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_nodes)
+    user        = var.user_name
+  }
+
+  provisioner "file" {
+    source      = "scripts/pre_init_config.sh"
+    destination = "/tmp/pre_init_config.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "bash /tmp/pre_init_config.sh"
+    ]
+  }
+}
+
 resource "null_resource" "init_main_master" {
+  depends_on = [
+    null_resource.pre_init_masters
+  ]
+
   connection {
     host        = hcloud_server.master[0].ipv4_address
     port        = var.custom_ssh_port
@@ -20,7 +51,7 @@ resource "null_resource" "init_main_master" {
 
   provisioner "remote-exec" {
     inline = [
-      "SSH_USERNAME=${var.user_name} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} APISERVER_ADVERTISE_ADDRESS=${hcloud_server.master[0].ipv4_address} APISERVER_CERT_EXTRA_SANS=${hcloud_server.master[0].ipv4_address} bash ./scripts/kube-main-master.sh"
+      "SSH_USERNAME=${var.user_name} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} APISERVER_ADVERTISE_ADDRESS=${hcloud_server.master[0].ipv4_address} APISERVER_CERT_EXTRA_SANS=${var.load_balancer_master_private_ip} bash ./scripts/kube-main-master.sh"
     ]
   }
 
@@ -46,15 +77,15 @@ resource "null_resource" "init_main_master" {
       "rm -rf scripts"
     ]
   }
-
-  depends_on = [
-    hcloud_load_balancer_network.master_load_balancer_network
-  ]
 }
 
 resource "null_resource" "init_masters" {
-  depends_on = [null_resource.init_main_master]
-  count      = var.master_count
+
+  depends_on = [
+    null_resource.pre_init_masters,
+    null_resource.init_main_master
+  ]
+  count = var.master_count
   connection {
     host        = hcloud_server.master[count.index].ipv4_address
     port        = var.custom_ssh_port
@@ -92,9 +123,38 @@ resource "null_resource" "init_masters" {
 
 }
 
+resource "null_resource" "pre_init_workers" {
+  depends_on = [
+    hcloud_server_network.worker_network,
+  ]
+  count = var.worker_count
+
+  connection {
+    host        = hcloud_server.worker[count.index].ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_nodes)
+    user        = var.user_name
+  }
+
+  provisioner "file" {
+    source      = "scripts/pre_init_config.sh"
+    destination = "/tmp/pre_init_config.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "bash /tmp/pre_init_config.sh"
+    ]
+  }
+}
+
 resource "null_resource" "init_workers" {
-  depends_on = [null_resource.init_masters]
-  count      = var.worker_count
+  depends_on = [
+    null_resource.init_masters,
+    null_resource.pre_init_workers
+  ]
+  count = var.worker_count
   connection {
     host        = hcloud_server.worker[count.index].ipv4_address
     port        = var.custom_ssh_port
@@ -106,6 +166,17 @@ resource "null_resource" "init_workers" {
   provisioner "remote-exec" {
     inline = [
       "mkdir -p scripts"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "scripts/pre_init_config.sh"
+    destination = "scripts/pre_init_config.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "bash ./scripts/pre_init_config.sh"
     ]
   }
 
@@ -132,9 +203,39 @@ resource "null_resource" "init_workers" {
 
 }
 
+resource "null_resource" "pre_init_ingresses" {
+  depends_on = [
+    hcloud_load_balancer_network.master_load_balancer_network,
+    hcloud_server_network.ingress_network
+  ]
+  count = var.ingress_count
+
+  connection {
+    host        = hcloud_server.ingress[count.index].ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_nodes)
+    user        = var.user_name
+  }
+
+  provisioner "file" {
+    source      = "scripts/pre_init_config.sh"
+    destination = "/tmp/pre_init_config.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "bash /tmp/pre_init_config.sh"
+    ]
+  }
+}
+
 resource "null_resource" "init_ingreses" {
-  depends_on = [null_resource.init_masters]
-  count      = var.ingress_count
+  depends_on = [
+    null_resource.init_masters,
+    null_resource.pre_init_ingresses
+  ]
+  count = var.ingress_count
   connection {
     host        = hcloud_server.ingress[count.index].ipv4_address
     port        = var.custom_ssh_port
