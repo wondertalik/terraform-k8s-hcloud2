@@ -62,6 +62,29 @@ resource "null_resource" "cilium" {
   ]
 }
 
+resource "null_resource" "hcloud_csi" {
+  depends_on = [null_resource.hccm]
+
+  connection {
+    host        = hcloud_server.entrance_server.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
+  }
+
+  provisioner "file" {
+    source      = "manifests/hcloud-csi.yml"
+    destination = "manifests/hcloud-csi.yml"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "kubectl apply -f manifests/hcloud-csi.yml"
+    ]
+  }
+}
+
 resource "null_resource" "metric_server" {
   count = var.metric_server_enabled ? 1 : 0
 
