@@ -1,4 +1,8 @@
 resource "null_resource" "hccm" {
+  depends_on = [
+    null_resource.init_masters
+  ]
+
   count = var.hccm_enabled ? 1 : 0
 
   connection {
@@ -23,13 +27,13 @@ resource "null_resource" "hccm" {
       "K8S_HCLOUD_TOKEN=${var.k8s_hcloud_token} PRIVATE_NETWORK_ID=${hcloud_network.private_network.id} POD_NETWORK_CIDR=${var.pod_network_cidr} bash charts/hccm/install.sh"
     ]
   }
-
-  depends_on = [
-    hcloud_server_network.entrance_network
-  ]
 }
 
 resource "null_resource" "cilium" {
+  depends_on = [
+    null_resource.hccm,
+  ]
+
   count = var.cilium_enabled ? 1 : 0
 
   connection {
@@ -51,19 +55,16 @@ resource "null_resource" "cilium" {
 
   provisioner "remote-exec" {
     inline = [
-      "MASTER_COUNT=${var.master_count} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} bash charts/cilium/install.sh",
+      "MASTER_COUNT=${var.master_count} RELAY_UI_ENABLED=${var.relay_ui_enabled} RELAY_UI_DOMAIN=${var.relay_ui_domain} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} bash charts/cilium/install.sh",
       "echo \"source <(cilium completion bash)\" >> .bashrc"
     ]
   }
 
-  depends_on = [
-    hcloud_server_network.entrance_network,
-    null_resource.hccm
-  ]
 }
 
 resource "null_resource" "hcloud_csi" {
   depends_on = [null_resource.hccm]
+  count      = var.hccm_enabled ? 1 : 0
 
   connection {
     host        = hcloud_server.entrance_server.ipv4_address
@@ -71,6 +72,10 @@ resource "null_resource" "hcloud_csi" {
     type        = "ssh"
     private_key = file(var.ssh_private_key_entrance)
     user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = ["mkdir -p manifests"]
   }
 
   provisioner "file" {
@@ -117,7 +122,10 @@ resource "null_resource" "metric_server" {
 }
 
 resource "null_resource" "ingress_nginx" {
-  count = var.ingress_enabled ? 1 : 0
+  depends_on = [
+    null_resource.init_ingreses,
+  ]
+  count = var.ingress_enabled && var.ingress_count > 0 ? 1 : 0
 
   connection {
     host        = hcloud_server.entrance_server.ipv4_address
@@ -141,12 +149,6 @@ resource "null_resource" "ingress_nginx" {
       "NODE_NAME=ingress-${var.location} NODE_COUNT=${var.ingress_count} bash charts/ingress-nginx/install.sh"
     ]
   }
-
-  depends_on = [
-    hcloud_server_network.entrance_network,
-    null_resource.cilium,
-    null_resource.hccm,
-  ]
 }
 
 resource "null_resource" "cert_manager" {
@@ -186,8 +188,14 @@ resource "null_resource" "post_restart_masters" {
     null_resource.hccm
   ]
   count = var.master_count
+
   connection {
-    host        = hcloud_server.master[count.index].ipv4_address
+    bastion_host        = hcloud_server.entrance_server.ipv4_address
+    bastion_port        = var.custom_ssh_port
+    bastion_private_key = file(var.ssh_private_key_nodes)
+    bastion_user        = var.user_name
+
+    host        = hcloud_server_network.master_network[count.index].ip
     port        = var.custom_ssh_port
     type        = "ssh"
     private_key = file(var.ssh_private_key_nodes)
@@ -205,8 +213,14 @@ resource "null_resource" "post_restart_workers" {
     null_resource.hccm
   ]
   count = var.worker_count
+
   connection {
-    host        = hcloud_server.worker[count.index].ipv4_address
+    bastion_host        = hcloud_server.entrance_server.ipv4_address
+    bastion_port        = var.custom_ssh_port
+    bastion_private_key = file(var.ssh_private_key_nodes)
+    bastion_user        = var.user_name
+
+    host        = hcloud_server_network.worker_network[count.index].ip
     port        = var.custom_ssh_port
     type        = "ssh"
     private_key = file(var.ssh_private_key_nodes)
@@ -224,8 +238,14 @@ resource "null_resource" "post_restart_ingresses" {
     null_resource.hccm
   ]
   count = var.ingress_count
+
   connection {
-    host        = hcloud_server.ingress[count.index].ipv4_address
+    bastion_host        = hcloud_server.entrance_server.ipv4_address
+    bastion_port        = var.custom_ssh_port
+    bastion_private_key = file(var.ssh_private_key_nodes)
+    bastion_user        = var.user_name
+
+    host        = hcloud_server_network.ingress_network[count.index].ip
     port        = var.custom_ssh_port
     type        = "ssh"
     private_key = file(var.ssh_private_key_nodes)
@@ -236,5 +256,30 @@ resource "null_resource" "post_restart_ingresses" {
     inline = ["sudo systemctl daemon-reload && sudo systemctl restart kubelet"]
   }
 }
+
+# resource "null_resource" "metric_server" {
+#   count = var.metric_server_enabled ? 1 : 0
+
+#   connection {
+#     host        = hcloud_server.entrance_server.ipv4_address
+#     port        = var.custom_ssh_port
+#     type        = "ssh"
+#     private_key = file(var.ssh_private_key_entrance)
+#     user        = var.user_name
+#   }
+
+#   provisioner "remote-exec" {
+#     inline = ["mkdir -p charts"]
+#   }
+
+#   provisioner "file" {
+#     source      = "charts/oauth2-proxy"
+#     destination = "charts"
+#   }
+
+#   depends_on = [
+#     hcloud_server_network.entrance_network
+#   ]
+# }
 
 

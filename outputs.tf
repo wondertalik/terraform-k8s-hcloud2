@@ -21,3 +21,7 @@ output "network_id" {
 output "subnet_network_id" {
   value = [hcloud_network_subnet.private_network_subnet.id]
 }
+
+output "ingress_load_balancer" {
+  value = hcloud_load_balancer.ingress_load_balancer
+}

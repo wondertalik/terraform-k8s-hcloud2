@@ -13,6 +13,10 @@ variable "user_passwd" {
   sensitive = true # Requires terraform >= 0.14
 }
 
+variable "cluster_name" {
+  default = "kubernetes"
+}
+
 variable "entrance_type" {
   description = "For more types have a look at https://www.hetzner.de/cloud"
   default     = "cx11"
@@ -166,4 +170,12 @@ variable "cert_manager_enabled" {
 }
 
 variable "cert_manager_acme_email" {
+}
+
+variable "relay_ui_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "relay_ui_domain" {
 }
