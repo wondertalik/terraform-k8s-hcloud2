@@ -143,6 +143,11 @@ resource "null_resource" "ingress_nginx" {
     destination = "charts"
   }
 
+    provisioner "file" {
+    source      = "charts/oauth2-proxy"
+    destination = "charts"
+  }
+
   provisioner "remote-exec" {
     inline = [
       "NODE_NAME=ingress-${var.location} NODE_COUNT=${var.ingress_count} bash charts/ingress-nginx/install.sh"
