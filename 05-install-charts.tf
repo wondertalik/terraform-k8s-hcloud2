@@ -150,7 +150,7 @@ resource "null_resource" "ingress_nginx" {
 
   provisioner "remote-exec" {
     inline = [
-      "NODE_NAME=ingress-${var.location} NODE_COUNT=${var.ingress_count} bash charts/ingress-nginx/install.sh"
+      "LOCATION=${var.location} INGRESS_LOAD_BALANCER_NAME=${var.ingress_load_balancer_name} INGRESS_LOAD_BALANCER_TYPE=${var.ingress_load_balancer_type}  NODE_NAME=ingress-${var.location} NODE_COUNT=${var.ingress_count} bash charts/ingress-nginx/install.sh"
     ]
   }
 }

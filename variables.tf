@@ -127,6 +127,10 @@ variable "ingress_load_balancer_type" {
   default = "lb11"
 }
 
+variable "ingress_load_balancer_name" {
+  default = "load-balancer-ingreses"
+}
+
 variable "pod_network_cidr" {
   default = "10.244.0.0/16"
 }
