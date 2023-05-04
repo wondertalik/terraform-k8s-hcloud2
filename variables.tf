@@ -179,3 +179,8 @@ variable "relay_ui_enabled" {
 
 variable "relay_ui_domain" {
 }
+
+variable "kube_prometheus_stack_enabled" {
+  type    = bool
+  default = false
+}

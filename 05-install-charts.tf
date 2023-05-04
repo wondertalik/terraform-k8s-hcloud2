@@ -91,6 +91,9 @@ resource "null_resource" "hcloud_csi" {
 }
 
 resource "null_resource" "metric_server" {
+  depends_on = [
+    null_resource.init_masters
+  ]
   count = var.metric_server_enabled ? 1 : 0
 
   connection {
@@ -115,10 +118,6 @@ resource "null_resource" "metric_server" {
       "bash charts/metrics-server/install.sh"
     ]
   }
-
-  depends_on = [
-    hcloud_server_network.entrance_network
-  ]
 }
 
 resource "null_resource" "ingress_nginx" {
@@ -152,6 +151,9 @@ resource "null_resource" "ingress_nginx" {
 }
 
 resource "null_resource" "cert_manager" {
+  depends_on = [
+    null_resource.init_masters,
+  ]
   count = var.cert_manager_enabled ? 1 : 0
 
   connection {
@@ -176,10 +178,36 @@ resource "null_resource" "cert_manager" {
       "ACME_EMAIL=${var.cert_manager_acme_email} bash charts/cert-manager/install.sh"
     ]
   }
+}
 
+resource "null_resource" "kube-prometheus-stack" {
   depends_on = [
-    hcloud_server_network.entrance_network
+    null_resource.init_masters
   ]
+  count = var.kube_prometheus_stack_enabled ? 1 : 0
+
+  connection {
+    host        = hcloud_server.entrance_server.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = ["mkdir -p charts"]
+  }
+
+  provisioner "file" {
+    source      = "charts/kube-prometheus-stack"
+    destination = "charts"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "bash charts/kube-prometheus-stack/install.sh"
+    ]
+  }
 }
 
 resource "null_resource" "post_restart_masters" {
@@ -256,30 +284,5 @@ resource "null_resource" "post_restart_ingresses" {
     inline = ["sudo systemctl daemon-reload && sudo systemctl restart kubelet"]
   }
 }
-
-# resource "null_resource" "metric_server" {
-#   count = var.metric_server_enabled ? 1 : 0
-
-#   connection {
-#     host        = hcloud_server.entrance_server.ipv4_address
-#     port        = var.custom_ssh_port
-#     type        = "ssh"
-#     private_key = file(var.ssh_private_key_entrance)
-#     user        = var.user_name
-#   }
-
-#   provisioner "remote-exec" {
-#     inline = ["mkdir -p charts"]
-#   }
-
-#   provisioner "file" {
-#     source      = "charts/oauth2-proxy"
-#     destination = "charts"
-#   }
-
-#   depends_on = [
-#     hcloud_server_network.entrance_network
-#   ]
-# }
 
 

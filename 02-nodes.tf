@@ -74,7 +74,8 @@ resource "hcloud_server" "master" {
 resource "hcloud_server_network" "master_network" {
   depends_on = [
     hcloud_server.master,
-    hcloud_network_subnet.private_network_subnet
+    hcloud_network_subnet.private_network_subnet,
+    hcloud_load_balancer_network.master_load_balancer_network
   ]
   count     = var.master_count
   server_id = hcloud_server.master[count.index].id
@@ -122,6 +123,9 @@ resource "hcloud_server" "worker" {
 }
 
 resource "hcloud_server_network" "worker_network" {
+  depends_on = [
+    hcloud_load_balancer_network.master_load_balancer_network
+  ]
   count     = var.worker_count
   server_id = hcloud_server.worker[count.index].id
   subnet_id = hcloud_network_subnet.private_network_subnet.id
@@ -167,6 +171,9 @@ resource "hcloud_server" "ingress" {
 }
 
 resource "hcloud_server_network" "ingress_network" {
+  depends_on = [
+    hcloud_load_balancer_network.master_load_balancer_network
+  ]
   count     = var.ingress_count
   server_id = hcloud_server.ingress[count.index].id
   subnet_id = hcloud_network_subnet.private_network_subnet.id
