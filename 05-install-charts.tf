@@ -55,7 +55,7 @@ resource "null_resource" "cilium" {
 
   provisioner "remote-exec" {
     inline = [
-      "MASTER_COUNT=${var.master_count} RELAY_UI_ENABLED=${var.relay_ui_enabled} RELAY_UI_DOMAIN=${var.relay_ui_domain} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} bash charts/cilium/install.sh",
+      "MASTER_COUNT=${var.master_count} RELAY_UI_ENABLED=${var.relay_ui_enabled} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} bash charts/cilium/install.sh",
       "echo \"source <(cilium completion bash)\" >> .bashrc"
     ]
   }
