@@ -13,6 +13,10 @@ variable "user_passwd" {
   sensitive = true # Requires terraform >= 0.14
 }
 
+variable "cluster_name" {
+  default = "kubernetes"
+}
+
 variable "entrance_type" {
   description = "For more types have a look at https://www.hetzner.de/cloud"
   default     = "cx11"
@@ -123,6 +127,10 @@ variable "ingress_load_balancer_type" {
   default = "lb11"
 }
 
+variable "ingress_load_balancer_name" {
+  default = "load-balancer-ingreses"
+}
+
 variable "pod_network_cidr" {
   default = "10.244.0.0/16"
 }
@@ -166,4 +174,24 @@ variable "cert_manager_enabled" {
 }
 
 variable "cert_manager_acme_email" {
+}
+
+variable "relay_ui_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "kube_prometheus_stack_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "loki_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "promtail_enabled" {
+  type    = bool
+  default = false
 }

@@ -19,7 +19,6 @@ data "cloudinit_config" "cloud_init_entrance" {
     content_type = "text/x-shellscript"
 
     content = replace(file("./scripts/setup-entrance.sh"), "[kubernetes-version]", var.kubernetes_version)
-
   }
 
 
@@ -39,9 +38,9 @@ resource "null_resource" "firewalls" {
   depends_on = [
     hcloud_server.master,
     hcloud_server.worker,
-    null_resource.init_masters,
-    null_resource.init_workers,
-    null_resource.init_ingreses,
+    # null_resource.init_masters,
+    # null_resource.init_workers,
+    # null_resource.init_ingreses,
     hcloud_server.entrance_server,
   ]
 }
@@ -125,14 +124,8 @@ resource "hcloud_server" "entrance_server" {
     destination = ".my-settings/kube-ps1.sh"
   }
 
-  provisioner "file" {
-    source      = "secrets/kubeadm_config"
-    destination = ".kube/config"
-  }
-
   provisioner "remote-exec" {
     inline = [
-      "chmod 600 .kube/config",
       "bash /tmp/configure-entranse.sh",
     ]
   }
@@ -141,16 +134,11 @@ resource "hcloud_server" "entrance_server" {
     "source" = "k8s-dev"
     "type"   = "entrance"
   }
-
-  depends_on = [
-    null_resource.init_masters,
-  ]
 }
 
 resource "hcloud_server_network" "entrance_network" {
   depends_on = [
-    hcloud_server.entrance_server,
-    hcloud_network_subnet.private_network_subnet
+    hcloud_load_balancer_network.master_load_balancer_network
   ]
   server_id = hcloud_server.entrance_server.id
   subnet_id = hcloud_network_subnet.private_network_subnet.id

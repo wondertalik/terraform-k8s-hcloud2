@@ -1,12 +1,13 @@
 resource "null_resource" "pre_init_masters" {
-  depends_on = [
-    hcloud_load_balancer_network.master_load_balancer_network,
-    hcloud_server_network.master_network
-  ]
   count = var.master_count
 
   connection {
-    host        = hcloud_server.master[count.index].ipv4_address
+    bastion_host        = hcloud_server.entrance_server.ipv4_address
+    bastion_port        = var.custom_ssh_port
+    bastion_private_key = file(var.ssh_private_key_nodes)
+    bastion_user        = var.user_name
+
+    host        = hcloud_server_network.master_network[count.index].ip
     port        = var.custom_ssh_port
     type        = "ssh"
     private_key = file(var.ssh_private_key_nodes)
@@ -51,7 +52,7 @@ resource "null_resource" "init_main_master" {
 
   provisioner "remote-exec" {
     inline = [
-      "SSH_USERNAME=${var.user_name} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} APISERVER_ADVERTISE_ADDRESS=${hcloud_server.master[0].ipv4_address} APISERVER_CERT_EXTRA_SANS=${var.load_balancer_master_private_ip} bash ./scripts/kube-main-master.sh"
+      "SSH_USERNAME=${var.user_name} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} CLUSTER_NAME=${var.cluster_name} bash ./scripts/kube-main-master.sh"
     ]
   }
 
@@ -71,6 +72,31 @@ resource "null_resource" "init_main_master" {
     }
   }
 
+  provisioner "file" {
+    connection {
+      host        = hcloud_server.entrance_server.ipv4_address
+      port        = var.custom_ssh_port
+      type        = "ssh"
+      private_key = file(var.ssh_private_key_nodes)
+      user        = var.user_name
+    }
+    source      = "secrets/kubeadm_config"
+    destination = ".kube/config"
+  }
+
+  provisioner "remote-exec" {
+    connection {
+      host        = hcloud_server.entrance_server.ipv4_address
+      port        = var.custom_ssh_port
+      type        = "ssh"
+      private_key = file(var.ssh_private_key_nodes)
+      user        = var.user_name
+    }
+    inline = [
+      "chmod 600 .kube/config",
+    ]
+  }
+
   provisioner "remote-exec" {
     inline = [
       "rm -rf /tmp/kubeadm",
@@ -80,11 +106,11 @@ resource "null_resource" "init_main_master" {
 }
 
 resource "null_resource" "init_masters" {
-
   depends_on = [
-    null_resource.pre_init_masters,
-    null_resource.init_main_master
+    null_resource.init_main_master,
+    null_resource.pre_init_masters
   ]
+
   count = var.master_count
   connection {
     host        = hcloud_server.master[count.index].ipv4_address
@@ -124,13 +150,15 @@ resource "null_resource" "init_masters" {
 }
 
 resource "null_resource" "pre_init_workers" {
-  depends_on = [
-    hcloud_server_network.worker_network,
-  ]
   count = var.worker_count
 
   connection {
-    host        = hcloud_server.worker[count.index].ipv4_address
+    bastion_host        = hcloud_server.entrance_server.ipv4_address
+    bastion_port        = var.custom_ssh_port
+    bastion_private_key = file(var.ssh_private_key_nodes)
+    bastion_user        = var.user_name
+
+    host        = hcloud_server_network.worker_network[count.index].ip
     port        = var.custom_ssh_port
     type        = "ssh"
     private_key = file(var.ssh_private_key_nodes)
@@ -170,17 +198,6 @@ resource "null_resource" "init_workers" {
   }
 
   provisioner "file" {
-    source      = "scripts/pre_init_config.sh"
-    destination = "scripts/pre_init_config.sh"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "bash ./scripts/pre_init_config.sh"
-    ]
-  }
-
-  provisioner "file" {
     source      = "scripts/kube-node.sh"
     destination = "scripts/kube-node.sh"
   }
@@ -204,14 +221,15 @@ resource "null_resource" "init_workers" {
 }
 
 resource "null_resource" "pre_init_ingresses" {
-  depends_on = [
-    hcloud_load_balancer_network.master_load_balancer_network,
-    hcloud_server_network.ingress_network
-  ]
   count = var.ingress_count
 
   connection {
-    host        = hcloud_server.ingress[count.index].ipv4_address
+    bastion_host        = hcloud_server.entrance_server.ipv4_address
+    bastion_port        = var.custom_ssh_port
+    bastion_private_key = file(var.ssh_private_key_nodes)
+    bastion_user        = var.user_name
+
+    host        = hcloud_server_network.ingress_network[count.index].ip
     port        = var.custom_ssh_port
     type        = "ssh"
     private_key = file(var.ssh_private_key_nodes)

@@ -34,9 +34,6 @@ data "cloudinit_config" "cloud_init_nodes" {
 
 # create masters server
 resource "hcloud_server" "master" {
-  depends_on = [
-    hcloud_load_balancer_network.master_load_balancer_network
-  ]
   count              = var.master_count
   name               = "master-${var.location}-${count.index + 1}"
   image              = var.master_image
@@ -77,7 +74,8 @@ resource "hcloud_server" "master" {
 resource "hcloud_server_network" "master_network" {
   depends_on = [
     hcloud_server.master,
-    hcloud_network_subnet.private_network_subnet
+    hcloud_network_subnet.private_network_subnet,
+    hcloud_load_balancer_network.master_load_balancer_network
   ]
   count     = var.master_count
   server_id = hcloud_server.master[count.index].id
@@ -126,7 +124,6 @@ resource "hcloud_server" "worker" {
 
 resource "hcloud_server_network" "worker_network" {
   depends_on = [
-    hcloud_server.worker,
     hcloud_load_balancer_network.master_load_balancer_network
   ]
   count     = var.worker_count
@@ -175,7 +172,6 @@ resource "hcloud_server" "ingress" {
 
 resource "hcloud_server_network" "ingress_network" {
   depends_on = [
-    hcloud_server.ingress,
     hcloud_load_balancer_network.master_load_balancer_network
   ]
   count     = var.ingress_count
@@ -186,7 +182,8 @@ resource "hcloud_server_network" "ingress_network" {
 
 
 resource "hcloud_firewall" "firewall_masters" {
-  name = "firewall-masters"
+  count = var.master_count > 0 ? 1 : 0
+  name  = "firewall-masters"
 
   rule {
     direction = "in"
@@ -311,7 +308,8 @@ resource "hcloud_firewall" "firewall_masters" {
 }
 
 resource "hcloud_firewall" "firewall_workers" {
-  name = "firewall-workers"
+  count = var.worker_count > 0 || var.ingress_count > 0 ? 1 : 0
+  name  = "firewall-workers"
 
   rule {
     direction = "in"
@@ -414,6 +412,6 @@ resource "hcloud_firewall" "firewall_workers" {
     ]
   }
   apply_to {
-    label_selector = "type=worker-node,type=ingress-node"
+    label_selector = "type in (worker-node,ingress-node)"
   }
 }

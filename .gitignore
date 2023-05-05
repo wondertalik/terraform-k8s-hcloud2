@@ -6,3 +6,4 @@ terraform.tfstate*
 *.plan
 .auto.tfvars
 .terraform.*
+values/

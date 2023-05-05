@@ -1,14 +1,47 @@
 #!/usr/bin/bash
 set -eux
 
+NODE_PRIVATE_IP=$(ip -4 -o a show ens10 | awk '{print $4}' | cut -d/ -f1)
+
+echo "KUBE_MAIN_NODE_PRIVATE_IP: $NODE_PRIVATE_IP"
+echo "
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+nodeRegistration:
+  criSocket: unix:///run/containerd/containerd.sock
+localAPIEndpoint:
+  advertiseAddress: $NODE_PRIVATE_IP
+  bindPort: 6443
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+controlPlaneEndpoint: "$CONTROL_PLANE_ENDPOINT:6443"
+networking:
+  podSubnet: $POD_NETWORK_CIDR
+apiServer:
+  certSANs:
+    - $NODE_PRIVATE_IP
+controllerManager:
+  extraArgs:
+    bind-address: 0.0.0.0
+scheduler:
+  extraArgs:
+    bind-address: 0.0.0.0
+etcd:
+  local:
+    extraArgs:
+      listen-metrics-urls: http://0.0.0.0:2381
+clusterName: $CLUSTER_NAME
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+metricsBindAddress: 0.0.0.0:10249
+" > /tmp/kubeadm.yml
+
 sudo kubeadm init \
-    --pod-network-cidr="$POD_NETWORK_CIDR" \
-    --control-plane-endpoint=$CONTROL_PLANE_ENDPOINT:6443 \
-    --cri-socket unix:///run/containerd/containerd.sock \
-    --apiserver-advertise-address $APISERVER_ADVERTISE_ADDRESS \
     --upload-certs \
-    --apiserver-cert-extra-sans $APISERVER_ADVERTISE_ADDRESS,$APISERVER_CERT_EXTRA_SANS \
-    --v=5
+    --config /tmp/kubeadm.yml \
+    --v=5 
 
 # used to join nodes to the cluster
 sudo mkdir -p /tmp/kubeadm
