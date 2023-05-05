@@ -45,7 +45,7 @@ nameOverride: ~
 
 networking:
   # If enabled, hcloud-ccm will be deployed with networking support.
-  enabled: true
+  enabled: false
   # If networking is enabled, clusterCIDR must match the PodCIDR subnet your cluster has been configured with.
   # The default "10.244.0.0/16" assumes you're using Flannel with default configuration.
   clusterCIDR: 10.244.0.0/16
