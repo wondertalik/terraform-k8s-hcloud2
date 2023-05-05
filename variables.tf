@@ -188,3 +188,13 @@ variable "kube_prometheus_stack_enabled" {
   type    = bool
   default = false
 }
+
+variable "loki_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "promtail_enabled" {
+  type    = bool
+  default = false
+}

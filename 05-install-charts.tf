@@ -208,11 +208,71 @@ resource "null_resource" "kube-prometheus-stack" {
     destination = "charts"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "bash charts/kube-prometheus-stack/install.sh"
-    ]
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "bash charts/kube-prometheus-stack/install.sh"
+  #   ]
+  # }
+}
+
+resource "null_resource" "loki" {
+  depends_on = [
+    null_resource.init_masters
+  ]
+  count = var.loki_enabled ? 1 : 0
+
+  connection {
+    host        = hcloud_server.entrance_server.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
   }
+
+  provisioner "remote-exec" {
+    inline = ["mkdir -p charts"]
+  }
+
+  provisioner "file" {
+    source      = "charts/loki"
+    destination = "charts"
+  }
+
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "bash charts/loki/install.sh"
+  #   ]
+  # }
+}
+
+resource "null_resource" "promtail" {
+  depends_on = [
+    null_resource.init_masters
+  ]
+  count = var.promtail_enabled ? 1 : 0
+
+  connection {
+    host        = hcloud_server.entrance_server.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = ["mkdir -p charts"]
+  }
+
+  provisioner "file" {
+    source      = "charts/promtail"
+    destination = "charts"
+  }
+
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "bash charts/promtail/install.sh"
+  #   ]
+  # }
 }
 
 resource "null_resource" "post_restart_masters" {
