@@ -140,7 +140,7 @@ variable "containerd_version" {
 }
 
 variable "kubernetes_version" {
-  default = "1.26.4"
+  default = "1.27.1"
 }
 
 variable "custom_ssh_port" {
@@ -165,7 +165,7 @@ variable "hccm_enabled" {
 
 variable "metric_server_enabled" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "cert_manager_enabled" {
