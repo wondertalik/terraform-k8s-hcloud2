@@ -144,8 +144,8 @@ $ terraform apply \
 - oauth2-proxy [6.12.0](https://artifacthub.io/packages/helm/oauth2-proxy/oauth2-proxy)
 - metrics-server [3.10.0](https://artifacthub.io/packages/helm/metrics-server/metrics-server)
 - loki [5.5.0](https://artifacthub.io/packages/helm/grafana/loki)
-- promtail [6.11.0](https://artifacthub.io/packages/helm/grafana/promtail)
-- kube-prometheus-stack [45.24.0](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack)
+- promtail [6.11.1](https://artifacthub.io/packages/helm/grafana/promtail)
+- kube-prometheus-stack [45.26.0](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack)
 - cert-manager [v1.11.1](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
 - ingress-nginx [4.6.1](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx)
 
