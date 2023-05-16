@@ -168,6 +168,10 @@ variable "metric_server_enabled" {
   default = false
 }
 
+variable "metric_server_version" {
+  default = "3.10.0"
+}
+
 variable "cert_manager_enabled" {
   type    = bool
   default = false

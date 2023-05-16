@@ -37,3 +37,7 @@ output "promtail_version" {
 output "loki_version" {
   value = [var.loki_version]
 }
+
+output "metric_server_version" {
+  value = [var.metric_server_version]
+}

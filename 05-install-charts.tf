@@ -94,6 +94,9 @@ resource "null_resource" "metric_server" {
   depends_on = [
     null_resource.init_masters
   ]
+  triggers = {
+    metric_server_version = var.metric_server_version
+  }
   count = var.metric_server_enabled ? 1 : 0
 
   connection {
@@ -105,7 +108,10 @@ resource "null_resource" "metric_server" {
   }
 
   provisioner "remote-exec" {
-    inline = ["mkdir -p charts"]
+    inline = [
+      "mkdir -p charts",
+      "rm -rf charts/metrics-server"
+    ]
   }
 
   provisioner "file" {
@@ -115,7 +121,7 @@ resource "null_resource" "metric_server" {
 
   provisioner "remote-exec" {
     inline = [
-      "bash charts/metrics-server/install.sh"
+      "METRIC_SERVER_VERSION=${var.metric_server_version} bash charts/metrics-server/install.sh"
     ]
   }
 }
