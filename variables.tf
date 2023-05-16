@@ -173,6 +173,10 @@ variable "cert_manager_enabled" {
   default = false
 }
 
+variable "cert_manager_version" {
+  default = "1.11.2"
+}
+
 variable "cert_manager_acme_email" {
 }
 

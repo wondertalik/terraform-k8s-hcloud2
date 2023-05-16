@@ -159,6 +159,9 @@ resource "null_resource" "cert_manager" {
   depends_on = [
     null_resource.init_masters,
   ]
+  triggers = {
+    cert_manager_version = var.cert_manager_version
+  }
   count = var.cert_manager_enabled ? 1 : 0
 
   connection {
@@ -173,6 +176,10 @@ resource "null_resource" "cert_manager" {
     inline = ["mkdir -p charts"]
   }
 
+  provisioner "remote-exec" {
+    inline = ["rm -rf charts/cert-manager"]
+  }
+
   provisioner "file" {
     source      = "charts/cert-manager"
     destination = "charts"
@@ -180,7 +187,7 @@ resource "null_resource" "cert_manager" {
 
   provisioner "remote-exec" {
     inline = [
-      "ACME_EMAIL=${var.cert_manager_acme_email} bash charts/cert-manager/install.sh"
+      "CERT_MANAGER_VERSION=${var.cert_manager_version} ACME_EMAIL=${var.cert_manager_acme_email} bash charts/cert-manager/install.sh"
     ]
   }
 }

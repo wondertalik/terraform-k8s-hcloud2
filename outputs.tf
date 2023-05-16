@@ -25,3 +25,7 @@ output "subnet_network_id" {
 output "kube_prometheus_stack_version" {
   value = [var.kube_prometheus_stack_version]
 }
+
+output "cert_manager_version" {
+  value = [var.cert_manager_version]
+}
