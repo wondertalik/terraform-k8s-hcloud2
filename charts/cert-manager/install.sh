@@ -10,6 +10,7 @@ curl -L --fail --remote-name-all https://github.com/cert-manager/cert-manager/re
 sudo tar xzvfC cmctl-linux-${ARCH}.tar.gz /usr/local/bin
 rm cmctl-linux-${ARCH}.tar.gz
 
+echo "CERT_MANAGER_VERSION: $CERT_MANAGER_VERSION"
 helm upgrade --install cert-manager charts/cert-manager/src/cert-manager -f charts/cert-manager/values.yaml \
   --namespace cert-manager \
   --create-namespace \

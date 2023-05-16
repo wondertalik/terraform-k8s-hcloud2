@@ -8,7 +8,7 @@ do
     kubectl label nodes $nodename "node.kubernetes.io/node-type-app=ingress-controller"
 done
 
-
+echo "INGRESS_VERSION: $INGRESS_VERSION"
 helm upgrade --install ingress-nginx charts/ingress-nginx/src/ingress-nginx -f charts/ingress-nginx/values.yaml \
      --namespace ingress-nginx --create-namespace \
      --set controller.tolerations[0].key="node-role.kubernetes.io/ingress",controller.tolerations[0].operator=Exists,controller.tolerations[0].effect=NoSchedule \
