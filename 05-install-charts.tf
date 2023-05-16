@@ -210,11 +210,10 @@ resource "null_resource" "kube-prometheus-stack" {
   }
 
   provisioner "remote-exec" {
-    inline = ["mkdir -p charts"]
-  }
-
-  provisioner "remote-exec" {
-    inline = ["rm -rf charts/kube-prometheus-stack"]
+    inline = [
+      "mkdir -p charts",
+      "rm -rf charts/kube-prometheus-stack"
+    ]
   }
 
   provisioner "file" {
@@ -233,6 +232,9 @@ resource "null_resource" "loki" {
   depends_on = [
     null_resource.init_masters
   ]
+  triggers = {
+    loki_version = var.loki_version
+  }
   count = var.loki_enabled ? 1 : 0
 
   connection {
@@ -244,7 +246,10 @@ resource "null_resource" "loki" {
   }
 
   provisioner "remote-exec" {
-    inline = ["mkdir -p charts"]
+    inline = [
+      "mkdir -p charts",
+      "rm -rf charts/loki"
+    ]
   }
 
   provisioner "file" {
@@ -254,7 +259,7 @@ resource "null_resource" "loki" {
 
   provisioner "remote-exec" {
     inline = [
-      "LOKI_INSTALL=${var.loki_install} bash charts/loki/install.sh"
+      "LOKI_VERSION=${var.loki_version} LOKI_INSTALL=${var.loki_install} bash charts/loki/install.sh"
     ]
   }
 }
@@ -277,11 +282,10 @@ resource "null_resource" "promtail" {
   }
 
   provisioner "remote-exec" {
-    inline = ["mkdir -p charts"]
-  }
-
-  provisioner "remote-exec" {
-    inline = ["rm -rf charts/promtail"]
+    inline = [
+      "mkdir -p charts",
+      "rm -rf charts/promtail"
+    ]
   }
 
   provisioner "file" {

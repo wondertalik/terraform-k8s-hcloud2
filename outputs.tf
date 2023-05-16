@@ -33,3 +33,7 @@ output "cert_manager_version" {
 output "promtail_version" {
   value = [var.promtail_version]
 }
+
+output "loki_version" {
+  value = [var.loki_version]
+}

@@ -209,6 +209,10 @@ variable "loki_install" {
   default = false
 }
 
+variable "loki_version" {
+  default = "5.5.0"
+}
+
 variable "promtail_enabled" {
   type    = bool
   default = false
