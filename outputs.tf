@@ -41,3 +41,7 @@ output "loki_version" {
 output "metric_server_version" {
   value = [var.metric_server_version]
 }
+
+output "hccm_version" {
+  value = [var.hccm_version]
+}

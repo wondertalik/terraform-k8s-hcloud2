@@ -163,6 +163,10 @@ variable "hccm_enabled" {
   default = true
 }
 
+variable "hccm_version" {
+  default = "1.15.0"
+}
+
 variable "metric_server_enabled" {
   type    = bool
   default = false

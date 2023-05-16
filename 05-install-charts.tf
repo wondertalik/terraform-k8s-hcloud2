@@ -2,6 +2,9 @@ resource "null_resource" "hccm" {
   depends_on = [
     null_resource.init_masters
   ]
+  triggers = {
+    hccm_version = var.hccm_version
+  }
 
   count = var.hccm_enabled ? 1 : 0
 
@@ -14,7 +17,10 @@ resource "null_resource" "hccm" {
   }
 
   provisioner "remote-exec" {
-    inline = ["mkdir -p charts"]
+    inline = [
+      "mkdir -p charts",
+      "rm -rf charts/hccm"
+    ]
   }
 
   provisioner "file" {
@@ -24,7 +30,7 @@ resource "null_resource" "hccm" {
 
   provisioner "remote-exec" {
     inline = [
-      "K8S_HCLOUD_TOKEN=${var.k8s_hcloud_token} PRIVATE_NETWORK_ID=${hcloud_network.private_network.id} POD_NETWORK_CIDR=${var.pod_network_cidr} bash charts/hccm/install.sh"
+      "HCCM_VERSION=${var.hccm_version} K8S_HCLOUD_TOKEN=${var.k8s_hcloud_token} PRIVATE_NETWORK_ID=${hcloud_network.private_network.id} POD_NETWORK_CIDR=${var.pod_network_cidr} bash charts/hccm/install.sh"
     ]
   }
 }
