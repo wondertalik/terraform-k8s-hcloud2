@@ -49,3 +49,7 @@ output "hccm_version" {
 output "ingress_version" {
   value = [var.ingress_version]
 }
+
+output "cilium_version" {
+  value = [var.cilium_version]
+}

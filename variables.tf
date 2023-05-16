@@ -162,6 +162,10 @@ variable "cilium_enabled" {
   default = true
 }
 
+variable "cilium_version" {
+  default = "1.13.2"
+}
+
 variable "hccm_enabled" {
   type    = bool
   default = true

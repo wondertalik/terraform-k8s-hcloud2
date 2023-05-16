@@ -2,6 +2,7 @@
 set -eux
 
 #install cilium from charts directory
+echo "CILIUM_VERSION: $CILIUM_VERSION"
 helm upgrade --install cilium charts/cilium/src/cilium -f charts/cilium/values.yaml \
    --namespace kube-system \
    --set operator.replicas=$MASTER_COUNT \

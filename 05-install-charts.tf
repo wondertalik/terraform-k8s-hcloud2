@@ -39,7 +39,9 @@ resource "null_resource" "cilium" {
   depends_on = [
     null_resource.hccm,
   ]
-
+  triggers = {
+    cilium_version = var.cilium_version
+  }
   count = var.cilium_enabled ? 1 : 0
 
   connection {
@@ -51,7 +53,10 @@ resource "null_resource" "cilium" {
   }
 
   provisioner "remote-exec" {
-    inline = ["mkdir -p charts"]
+    inline = [
+      "mkdir -p charts",
+      "rm -rf charts/cilium"
+    ]
   }
 
   provisioner "file" {
@@ -61,7 +66,7 @@ resource "null_resource" "cilium" {
 
   provisioner "remote-exec" {
     inline = [
-      "MASTER_COUNT=${var.master_count} RELAY_UI_ENABLED=${var.relay_ui_enabled} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} bash charts/cilium/install.sh",
+      "CILIUM_VERSION=${var.cilium_version} MASTER_COUNT=${var.master_count} RELAY_UI_ENABLED=${var.relay_ui_enabled} POD_NETWORK_CIDR=${var.pod_network_cidr} CONTROL_PLANE_ENDPOINT=${var.load_balancer_master_private_ip} bash charts/cilium/install.sh",
       "echo \"source <(cilium completion bash)\" >> .bashrc"
     ]
   }
