@@ -263,6 +263,9 @@ resource "null_resource" "promtail" {
   depends_on = [
     null_resource.init_masters
   ]
+  triggers = {
+    promtail_version = var.promtail_version
+  }
   count = var.promtail_enabled ? 1 : 0
 
   connection {
@@ -277,6 +280,10 @@ resource "null_resource" "promtail" {
     inline = ["mkdir -p charts"]
   }
 
+  provisioner "remote-exec" {
+    inline = ["rm -rf charts/promtail"]
+  }
+
   provisioner "file" {
     source      = "charts/promtail"
     destination = "charts"
@@ -284,7 +291,7 @@ resource "null_resource" "promtail" {
 
   provisioner "remote-exec" {
     inline = [
-      "PROMTAIL_INSTALL=${var.promtail_install} bash charts/promtail/install.sh"
+      "PROMTAIL_VERSION=${var.promtail_version} PROMTAIL_INSTALL=${var.promtail_install} bash charts/promtail/install.sh"
     ]
   }
 }

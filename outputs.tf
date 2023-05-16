@@ -29,3 +29,7 @@ output "kube_prometheus_stack_version" {
 output "cert_manager_version" {
   value = [var.cert_manager_version]
 }
+
+output "promtail_version" {
+  value = [var.promtail_version]
+}

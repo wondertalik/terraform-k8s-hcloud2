@@ -218,3 +218,7 @@ variable "promtail_install" {
   type    = bool
   default = true
 }
+
+variable "promtail_version" {
+  default = "6.1.2"
+}
