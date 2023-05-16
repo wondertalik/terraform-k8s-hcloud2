@@ -75,7 +75,7 @@ terraform apply "k8s-dev-stand.plan"
 | `network_zone`                    | `eu-central`             | Predefined network zone                                                                                                                                  |    No    |
 | `pod_network_cidr`                | `10.244.0.0/16`          | The pod IPs that was created at installation time                                                                                                        |    No    |
 | `location`                        | `nbg1`                   | Predefined location, for more locations have a look at https://docs.hetzner.com/cloud/general/locations                                                  |    No    |
-| `kubernetes_version`              | `1.26.4`                 | Kubernetes version that will be installed                                                                                                                |    No    |
+| `kubernetes_version`              | `1.27.1`                 | Kubernetes version that will be installed                                                                                                                |    No    |
 | `containerd_version`              | `1.7.0`                  | Version of containerd (container runtimes)                                                                                                               |    No    |
 | `cilium_enabled`                  | `true`                   | Installs Cilium Network Provider after the master comes up                                                                                               |    No    |
 | `relay_ui_enabled`                | `true`                   | Installs Ingress-Nginx after the ingress nodes comes up                                                                                                  |    No    |
@@ -83,7 +83,7 @@ terraform apply "k8s-dev-stand.plan"
 | `ingress_enabled`                 | `true`                   | Installs Ingress-Nginx after the ingress nodes comes up                                                                                                  |    No    |
 | `ingress_load_balancer_name`      | `load-balancer-ingreses` | Ingess load balancer name                                                                                                                                |    No    |
 | `ingress_load_balancer_type`      | `lb11`                   | Ingress load balancer type                                                                                                                               |    No    |
-| `metric_server_enabled`           | `false`                   | Installs Metrics Server after the master comes up                                                                                                        |    No    |
+| `metric_server_enabled`           | `false`                  | Installs Metrics Server after the master comes up                                                                                                        |    No    |
 | `promtail_enabled`                | `false`                  | Copy Promtail chart to entrance server                                                                                                                   |    No    |
 | `loki_enabled`                    | `false`                  | Copy Loki chart to entrance server                                                                                                                       |    No    |
 | `kube_prometheus_stack_enabled`   | `false`                  | Copy Kube Prometheus Stack chart to entrance server                                                                                                      |    No    |
@@ -144,9 +144,9 @@ $ terraform apply \
 - oauth2-proxy [6.12.0](https://artifacthub.io/packages/helm/oauth2-proxy/oauth2-proxy)
 - metrics-server [3.10.0](https://artifacthub.io/packages/helm/metrics-server/metrics-server)
 - loki [5.5.0](https://artifacthub.io/packages/helm/grafana/loki)
-- promtail [6.11.1](https://artifacthub.io/packages/helm/grafana/promtail)
-- kube-prometheus-stack [45.26.0](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack)
-- cert-manager [v1.11.1](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
+- promtail [6.11.2](https://artifacthub.io/packages/helm/grafana/promtail)
+- kube-prometheus-stack [45.28.0](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack)
+- cert-manager [v1.11.2](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
 - ingress-nginx [4.6.1](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx)
 
 ## Contributing
