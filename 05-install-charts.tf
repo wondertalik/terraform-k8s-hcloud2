@@ -208,11 +208,11 @@ resource "null_resource" "kube-prometheus-stack" {
     destination = "charts"
   }
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "bash charts/kube-prometheus-stack/install.sh"
-  #   ]
-  # }
+  provisioner "remote-exec" {
+    inline = [
+      "KUBE_PROMETHEUS_STACK_INSTALL=${var.kube_prometheus_stack_install} bash charts/kube-prometheus-stack/install.sh"
+    ]
+  }
 }
 
 resource "null_resource" "loki" {
@@ -238,11 +238,11 @@ resource "null_resource" "loki" {
     destination = "charts"
   }
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "bash charts/loki/install.sh"
-  #   ]
-  # }
+  provisioner "remote-exec" {
+    inline = [
+      "LOKI_INSTALL=${var.loki_install} bash charts/loki/install.sh"
+    ]
+  }
 }
 
 resource "null_resource" "promtail" {
@@ -268,11 +268,11 @@ resource "null_resource" "promtail" {
     destination = "charts"
   }
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "bash charts/promtail/install.sh"
-  #   ]
-  # }
+  provisioner "remote-exec" {
+    inline = [
+      "PROMTAIL_INSTALL=${var.promtail_install} bash charts/promtail/install.sh"
+    ]
+  }
 }
 
 resource "null_resource" "post_restart_masters" {
