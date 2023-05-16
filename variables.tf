@@ -191,6 +191,10 @@ variable "kube_prometheus_stack_install" {
   default = false
 }
 
+variable "kube_prometheus_stack_version" {
+  default = "45.28.0"
+}
+
 variable "loki_enabled" {
   type    = bool
   default = false

@@ -21,3 +21,7 @@ output "network_id" {
 output "subnet_network_id" {
   value = [hcloud_network_subnet.private_network_subnet.id]
 }
+
+output "kube_prometheus_stack_version" {
+  value = [var.kube_prometheus_stack_version]
+}

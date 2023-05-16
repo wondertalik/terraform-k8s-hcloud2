@@ -143,7 +143,7 @@ resource "null_resource" "ingress_nginx" {
     destination = "charts"
   }
 
-    provisioner "file" {
+  provisioner "file" {
     source      = "charts/oauth2-proxy"
     destination = "charts"
   }
@@ -189,6 +189,9 @@ resource "null_resource" "kube-prometheus-stack" {
   depends_on = [
     null_resource.init_masters
   ]
+  triggers = {
+    kube_rometheus_stack_version = var.kube_prometheus_stack_version
+  }
   count = var.kube_prometheus_stack_enabled ? 1 : 0
 
   connection {
@@ -203,6 +206,10 @@ resource "null_resource" "kube-prometheus-stack" {
     inline = ["mkdir -p charts"]
   }
 
+  provisioner "remote-exec" {
+    inline = ["rm -rf charts/kube-prometheus-stack"]
+  }
+
   provisioner "file" {
     source      = "charts/kube-prometheus-stack"
     destination = "charts"
@@ -210,7 +217,7 @@ resource "null_resource" "kube-prometheus-stack" {
 
   provisioner "remote-exec" {
     inline = [
-      "KUBE_PROMETHEUS_STACK_INSTALL=${var.kube_prometheus_stack_install} bash charts/kube-prometheus-stack/install.sh"
+      "KUBE_PROMETHEUS_STACK_VERSION=${var.kube_prometheus_stack_version} KUBE_PROMETHEUS_STACK_INSTALL=${var.kube_prometheus_stack_install} bash charts/kube-prometheus-stack/install.sh"
     ]
   }
 }
