@@ -153,6 +153,10 @@ variable "ingress_enabled" {
   default = true
 }
 
+variable "ingress_version" {
+  default = "4.6.1"
+}
+
 variable "cilium_enabled" {
   type    = bool
   default = true

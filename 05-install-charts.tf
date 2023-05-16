@@ -136,6 +136,9 @@ resource "null_resource" "ingress_nginx" {
   depends_on = [
     null_resource.init_ingreses,
   ]
+  triggers = {
+    ingress_version = var.ingress_version
+  }
   count = var.ingress_enabled && var.ingress_count > 0 ? 1 : 0
 
   connection {
@@ -147,7 +150,11 @@ resource "null_resource" "ingress_nginx" {
   }
 
   provisioner "remote-exec" {
-    inline = ["mkdir -p charts"]
+    inline = [
+      "mkdir -p charts",
+      "rm -rf charts/ingress-nginx",
+      "rm -rf charts/oauth2-proxy"
+    ]
   }
 
   provisioner "file" {
@@ -162,7 +169,7 @@ resource "null_resource" "ingress_nginx" {
 
   provisioner "remote-exec" {
     inline = [
-      "LOCATION=${var.location} INGRESS_LOAD_BALANCER_NAME=${var.ingress_load_balancer_name} INGRESS_LOAD_BALANCER_TYPE=${var.ingress_load_balancer_type}  NODE_NAME=ingress-${var.location} NODE_COUNT=${var.ingress_count} bash charts/ingress-nginx/install.sh"
+      "INGRESS_VERSION=${var.ingress_version} LOCATION=${var.location} INGRESS_LOAD_BALANCER_NAME=${var.ingress_load_balancer_name} INGRESS_LOAD_BALANCER_TYPE=${var.ingress_load_balancer_type}  NODE_NAME=ingress-${var.location} NODE_COUNT=${var.ingress_count} bash charts/ingress-nginx/install.sh"
     ]
   }
 }

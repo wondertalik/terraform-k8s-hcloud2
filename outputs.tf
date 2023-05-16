@@ -45,3 +45,7 @@ output "metric_server_version" {
 output "hccm_version" {
   value = [var.hccm_version]
 }
+
+output "ingress_version" {
+  value = [var.ingress_version]
+}
