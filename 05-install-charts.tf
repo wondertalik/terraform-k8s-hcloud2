@@ -41,6 +41,7 @@ resource "null_resource" "cilium" {
   ]
   triggers = {
     cilium_version = var.cilium_version
+    cilium_values_path = var.cilium_values_path
   }
   count = var.cilium_enabled ? 1 : 0
 
@@ -62,6 +63,12 @@ resource "null_resource" "cilium" {
   provisioner "file" {
     source      = "charts/cilium"
     destination = "charts"
+  }
+
+  provisioner "file" {
+    on_failure  = continue
+    source      = var.cilium_values_path
+    destination = "charts/cilium/values.yaml"
   }
 
   provisioner "remote-exec" {

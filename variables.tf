@@ -166,6 +166,10 @@ variable "cilium_version" {
   default = "1.13.2"
 }
 
+variable "cilium_values_path" {
+  default = "values/cilium-values.yaml"
+}
+
 variable "hccm_enabled" {
   type    = bool
   default = true
