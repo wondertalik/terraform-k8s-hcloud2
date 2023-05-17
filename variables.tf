@@ -153,8 +153,31 @@ variable "ingress_enabled" {
   default = true
 }
 
+variable "ingress_custom_values_path" {
+  default = ""
+}
+
+
 variable "ingress_version" {
   default = "4.6.1"
+}
+
+variable "oauth2_proxy_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "oauth2_proxy_install" {
+  type    = bool
+  default = false
+}
+
+variable "oauth2_proxy_custom_values_path" {
+  default = ""
+}
+
+variable "oauth2_proxy_version" {
+  default = "6.12.0"
 }
 
 variable "cilium_enabled" {
@@ -166,6 +189,11 @@ variable "cilium_version" {
   default = "1.13.2"
 }
 
+
+variable "cilium_custom_values_path" {
+  default = ""
+}
+
 variable "hccm_enabled" {
   type    = bool
   default = true
@@ -173,6 +201,10 @@ variable "hccm_enabled" {
 
 variable "hccm_version" {
   default = "1.15.0"
+}
+
+variable "hccm_custom_values_path" {
+  default = ""
 }
 
 variable "metric_server_enabled" {
@@ -184,6 +216,10 @@ variable "metric_server_version" {
   default = "3.10.0"
 }
 
+variable "metric_server_custom_values_path" {
+  default = ""
+}
+
 variable "cert_manager_enabled" {
   type    = bool
   default = false
@@ -191,6 +227,10 @@ variable "cert_manager_enabled" {
 
 variable "cert_manager_version" {
   default = "1.11.2"
+}
+
+variable "cert_manager_custom_values_path" {
+  default = ""
 }
 
 variable "cert_manager_acme_email" {
@@ -211,6 +251,10 @@ variable "kube_prometheus_stack_install" {
   default = false
 }
 
+variable "kube_prometheus_stack_custom_values_path" {
+  default = ""
+}
+
 variable "kube_prometheus_stack_version" {
   default = "45.28.0"
 }
@@ -225,6 +269,10 @@ variable "loki_install" {
   default = false
 }
 
+variable "loki_custom_values_path" {
+  default = ""
+}
+
 variable "loki_version" {
   default = "5.5.0"
 }
@@ -236,7 +284,11 @@ variable "promtail_enabled" {
 
 variable "promtail_install" {
   type    = bool
-  default = true
+  default = false
+}
+
+variable "promtail_custom_values_path" {
+  default = ""
 }
 
 variable "promtail_version" {

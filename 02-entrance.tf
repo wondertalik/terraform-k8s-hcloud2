@@ -38,9 +38,6 @@ resource "null_resource" "firewalls" {
   depends_on = [
     hcloud_server.master,
     hcloud_server.worker,
-    # null_resource.init_masters,
-    # null_resource.init_workers,
-    # null_resource.init_ingreses,
     hcloud_server.entrance_server,
   ]
 }
@@ -112,6 +109,18 @@ resource "hcloud_server" "entrance_server" {
   provisioner "file" {
     source      = "demo"
     destination = "demo"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "rm -rf customs",
+    ]
+  }
+
+  provisioner "file" {
+    source      = "customs"
+    destination = "customs"
+    on_failure  = continue
   }
 
   provisioner "file" {
