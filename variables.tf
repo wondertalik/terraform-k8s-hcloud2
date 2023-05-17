@@ -256,7 +256,7 @@ variable "kube_prometheus_stack_custom_values_path" {
 }
 
 variable "kube_prometheus_stack_version" {
-  default = "45.28.0"
+  default = "45.28.1"
 }
 
 variable "loki_enabled" {
