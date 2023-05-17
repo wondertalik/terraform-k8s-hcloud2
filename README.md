@@ -157,9 +157,9 @@ $ terraform apply \
 - cilium [1.13.2](https://artifacthub.io/packages/helm/cilium/cilium)
 - oauth2-proxy [6.12.0](https://artifacthub.io/packages/helm/oauth2-proxy/oauth2-proxy)
 - metrics-server [3.10.0](https://artifacthub.io/packages/helm/metrics-server/metrics-server)
-- loki [5.5.0](https://artifacthub.io/packages/helm/grafana/loki)
+- loki [5.5.2](https://artifacthub.io/packages/helm/grafana/loki)
 - promtail [6.11.2](https://artifacthub.io/packages/helm/grafana/promtail)
-- kube-prometheus-stack [45.28.0](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack)
+- kube-prometheus-stack [45.28.1](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack)
 - cert-manager [v1.11.2](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
 - ingress-nginx [4.6.1](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx)
 
