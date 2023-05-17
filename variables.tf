@@ -274,7 +274,7 @@ variable "loki_custom_values_path" {
 }
 
 variable "loki_version" {
-  default = "5.5.0"
+  default = "5.5.2"
 }
 
 variable "promtail_enabled" {
