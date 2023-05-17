@@ -53,3 +53,7 @@ output "ingress_version" {
 output "cilium_version" {
   value = [var.cilium_version]
 }
+
+output "oauth2_proxy_version" {
+  value = [var.oauth2_proxy_version]
+}
