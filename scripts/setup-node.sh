@@ -89,7 +89,7 @@ EOF
 sysctl --system
 
 #Installing kubeadm, kubelet and kubectl
-curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
 apt update && apt-get -qq install -y kubelet=[kubernetes-version]-00 kubeadm=[kubernetes-version]-00 && apt-mark hold kubelet kubeadm
 

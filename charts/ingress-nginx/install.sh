@@ -14,8 +14,5 @@ helm upgrade --install ingress-nginx charts/ingress-nginx/src/ingress-nginx -f c
      --set controller.tolerations[0].key="node-role.kubernetes.io/ingress",controller.tolerations[0].operator=Exists,controller.tolerations[0].effect=NoSchedule \
      --set controller.nodeSelector."node\.kubernetes\.io/node-type-app"=ingress-controller \
      --set controller.service.annotations."load-balancer\.hetzner\.cloud/name"=$INGRESS_LOAD_BALANCER_NAME \
-     --set controller.service.annotations."load-balancer\.hetzner\.cloud/location"=$LOCATION \
-     --set controller.service.annotations."load-balancer\.hetzner\.cloud/use-private-ip"=true \
-     --set controller.service.annotations."load-balancer\.hetzner\.cloud/type"=$INGRESS_LOAD_BALANCER_TYPE \
      --set controller.replicaCount=$NODE_COUNT \
      --set controller.kind=DaemonSet

@@ -140,7 +140,7 @@ variable "containerd_version" {
 }
 
 variable "kubernetes_version" {
-  default = "1.27.1"
+  default = "1.27.2"
 }
 
 variable "custom_ssh_port" {
