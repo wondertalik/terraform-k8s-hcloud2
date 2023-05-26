@@ -226,7 +226,7 @@ variable "cert_manager_enabled" {
 }
 
 variable "cert_manager_version" {
-  default = "1.11.2"
+  default = "1.12.1"
 }
 
 variable "cert_manager_custom_values_path" {
