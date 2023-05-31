@@ -131,6 +131,10 @@ variable "ingress_load_balancer_name" {
   default = "load-balancer-ingreses"
 }
 
+variable "ingress_load_balancer_create_manual" {
+  default = false
+}
+
 variable "pod_network_cidr" {
   default = "10.244.0.0/16"
 }

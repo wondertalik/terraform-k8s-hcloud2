@@ -79,7 +79,7 @@ resource "hcloud_load_balancer_service" "master_load_balancer_service" {
 }
 
 resource "hcloud_load_balancer" "ingress_load_balancer" {
-  count              = var.ingress_enabled && var.ingress_count > 0 ? 1 : 0
+  count              = var.ingress_enabled && var.ingress_count > 0 && var.ingress_load_balancer_create_manual ? 1 : 0
   name               = "load-balancer-ingreses"
   load_balancer_type = var.ingress_load_balancer_type
   location           = var.location
@@ -94,14 +94,14 @@ resource "hcloud_load_balancer_network" "ingress_load_balancer_network" {
   depends_on = [
     hcloud_load_balancer_network.master_load_balancer_network
   ]
-  count                   = var.ingress_enabled && var.ingress_count > 0 ? 1 : 0
+  count                   = var.ingress_enabled && var.ingress_count > 0 && var.ingress_load_balancer_create_manual ? 1 : 0
   load_balancer_id        = hcloud_load_balancer.ingress_load_balancer[count.index].id
   subnet_id               = hcloud_network_subnet.private_network_subnet.id
   enable_public_interface = true
 }
 
 resource "hcloud_load_balancer_target" "ingress_load_balancer_target" {
-  count = var.ingress_enabled && var.ingress_count > 0 ? 1 : 0
+  count = var.ingress_enabled && var.ingress_count > 0 && var.ingress_load_balancer_create_manual ? 1 : 0
   depends_on = [
     hcloud_load_balancer_network.ingress_load_balancer_network
   ]
@@ -112,7 +112,7 @@ resource "hcloud_load_balancer_target" "ingress_load_balancer_target" {
 }
 
 resource "hcloud_load_balancer_service" "ingress_https_load_balancer_service" {
-  count            = var.ingress_enabled && var.ingress_count > 0 ? 1 : 0
+  count            = var.ingress_enabled && var.ingress_count > 0 && var.ingress_load_balancer_create_manual ? 1 : 0
   load_balancer_id = hcloud_load_balancer.ingress_load_balancer[count.index].id
   protocol         = "tcp"
   listen_port      = 443
@@ -120,7 +120,7 @@ resource "hcloud_load_balancer_service" "ingress_https_load_balancer_service" {
 }
 
 resource "hcloud_load_balancer_service" "ingress_http_load_balancer_service" {
-  count            = var.ingress_enabled && var.ingress_count > 0 ? 1 : 0
+  count            = var.ingress_enabled && var.ingress_count > 0 && var.ingress_load_balancer_create_manual ? 1 : 0
   load_balancer_id = hcloud_load_balancer.ingress_load_balancer[0].id
   protocol         = "tcp"
   listen_port      = 80
