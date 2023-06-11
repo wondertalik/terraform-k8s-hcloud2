@@ -114,10 +114,10 @@ rollOutCiliumPods: false
 image:
   override: ~
   repository: "quay.io/cilium/cilium"
-  tag: "v1.13.2"
+  tag: "v1.13.3"
   pullPolicy: "IfNotPresent"
   # cilium-digest
-  digest: "sha256:85708b11d45647c35b9288e0de0706d24a5ce8a378166cadc700f756cc1a38d6"
+  digest: "sha256:77176464a1e11ea7e89e984ac7db365e7af39851507e94f137dcf56c87746314"
   useDigest: true
 
 # -- Affinity for cilium-agent.
@@ -997,9 +997,9 @@ hubble:
     image:
       override: ~
       repository: "quay.io/cilium/hubble-relay"
-      tag: "v1.13.2"
+      tag: "v1.13.3"
        # hubble-relay-digest
-      digest: "sha256:51b772cab0724511583c3da3286439791dc67d7c35077fa30eaba3b5d555f8f4"
+      digest: "sha256:19e4aae5ff72cd9fbcb7d2d16a1570533320a478acc015fc91a4d41a177cadf6"
       useDigest: true
       pullPolicy: "IfNotPresent"
 
@@ -1848,15 +1848,15 @@ operator:
   image:
     override: ~
     repository: "quay.io/cilium/operator"
-    tag: "v1.13.2"
+    tag: "v1.13.3"
     # operator-generic-digest
-    genericDigest: "sha256:a1982c0a22297aaac3563e428c330e17668305a41865a842dec53d241c5490ab"
+    genericDigest: "sha256:fa7003cbfdf8358cb71786afebc711b26e5e44a2ed99bd4944930bba915b8910"
     # operator-azure-digest
-    azureDigest: "sha256:bfce3268bd32f1703ffb22339f9c306e99015585328a39b179c8ace72481a714"
+    azureDigest: "sha256:7749b732d510954d9fb74f7e675b31b49100fd773e588c6fbbf42529acfb1be8"
     # operator-aws-digest
-    awsDigest: "sha256:94d5a291f80e2d568302b144d1d002fb1d43b436befed74a38f630fdc6d6f0c6"
+    awsDigest: "sha256:394c40d156235d3c2004f77bb73402457092351cc6debdbc5727ba36fbd863ae"
     # operator-alibabacloud-digest
-    alibabacloudDigest: "sha256:8b5623a272c18ba823a4105308902cf1901fef494ccad85ab00791296fde4b3b"
+    alibabacloudDigest: "sha256:8dba4795cb38200746a2236623f5b84742ee2c56a8afda724c85f5027ea854eb"
     useDigest: true
     pullPolicy: "IfNotPresent"
     suffix: ""
@@ -2105,9 +2105,9 @@ preflight:
   image:
     override: ~
     repository: "quay.io/cilium/cilium"
-    tag: "v1.13.2"
+    tag: "v1.13.3"
     # cilium-digest
-    digest: "sha256:85708b11d45647c35b9288e0de0706d24a5ce8a378166cadc700f756cc1a38d6"
+    digest: "sha256:77176464a1e11ea7e89e984ac7db365e7af39851507e94f137dcf56c87746314"
     useDigest: true
     pullPolicy: "IfNotPresent"
 
@@ -2252,9 +2252,9 @@ clustermesh:
     image:
       override: ~
       repository: "quay.io/cilium/clustermesh-apiserver"
-      tag: "v1.13.2"
+      tag: "v1.13.3"
       # clustermesh-apiserver-digest
-      digest: "sha256:4b07ac66d83dcf329252145f82c126705f291687d5b41161321220d115b7fee3"
+      digest: "sha256:5ad8e9dc17f5677d1d75b53a4e80ec2e5c4fcf4973ced8b30f8ad53933c6969a"
       useDigest: true
       pullPolicy: "IfNotPresent"
 
@@ -2292,6 +2292,14 @@ clustermesh:
       # -- The type of service used for apiserver access.
       type: NodePort
       # -- Optional port to use as the node port for apiserver access.
+      #
+      # WARNING: make sure to configure a different NodePort in each cluster if
+      # kube-proxy replacement is enabled, as Cilium is currently affected by a known
+      # bug (#24692) when NodePorts are handled by the KPR implementation. If a service
+      # with the same NodePort exists both in the local and the remote cluster, all
+      # traffic originating from inside the cluster and targeting the corresponding
+      # NodePort will be redirected to a local backend, regardless of whether the
+      # destination node belongs to the local or the remote cluster.
       nodePort: 32379
       # -- Optional loadBalancer IP address to use with type LoadBalancer.
       # loadBalancerIP:

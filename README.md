@@ -155,7 +155,7 @@ $ terraform apply \
 
 ** Charts **
 - hccm [v1.15.0](https://github.com/hetznercloud/hcloud-cloud-controller-manager/blob/main/chart/README.md)
-- cilium [1.13.2](https://artifacthub.io/packages/helm/cilium/cilium)
+- cilium [1.13.3](https://artifacthub.io/packages/helm/cilium/cilium)
 - oauth2-proxy [6.12.0](https://artifacthub.io/packages/helm/oauth2-proxy/oauth2-proxy)
 - metrics-server [3.10.0](https://artifacthub.io/packages/helm/metrics-server/metrics-server)
 - loki [5.5.2](https://artifacthub.io/packages/helm/grafana/loki)
