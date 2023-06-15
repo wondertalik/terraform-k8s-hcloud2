@@ -205,3 +205,25 @@ helm upgrade --install kube-prometheus-stack charts/kube-prometheus-stack/src/ku
 ```
 helm uninstall kube-prometheus-stack -n monitoring
 ```
+
+### kubernetes-dashboard
+
+#### Download source chart
+```
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+helm repo update
+helm pull kubernetes-dashboard/kubernetes-dashboard --untar -d charts/kubernetes-dashboard --untardir src
+helm show values kubernetes-dashboard/kubernetes-dashboard > charts/kubernetes-dashboard/values.yaml
+```
+
+#### Install chart from directory
+
+```
+helm upgrade --install kubernetes-dashboard charts/kubernetes-dashboard/src/kubernetes-dashboard -f charts/kubernetes-dashboard/values.yaml --namespace monitoring --create-namespace
+```
+
+#### Uninstall
+
+```
+helm uninstall kubernetes-dashboard -n monitoring
+```
