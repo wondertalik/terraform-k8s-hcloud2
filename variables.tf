@@ -190,7 +190,7 @@ variable "cilium_enabled" {
 }
 
 variable "cilium_version" {
-  default = "1.13.3"
+  default = "1.13.4"
 }
 
 

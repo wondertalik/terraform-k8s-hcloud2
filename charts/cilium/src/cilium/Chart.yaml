@@ -103,7 +103,7 @@ annotations:
         CiliumNodeConfig is a list of configuration key-value pairs. It is applied to
         nodes indicated by a label selector.
 apiVersion: v2
-appVersion: 1.13.3
+appVersion: 1.13.4
 description: eBPF-based Networking, Security, and Observability
 home: https://cilium.io/
 icon: https://cdn.jsdelivr.net/gh/cilium/cilium@v1.13/Documentation/images/logo-solo.svg
@@ -119,4 +119,4 @@ kubeVersion: '>= 1.16.0-0'
 name: cilium
 sources:
 - https://github.com/cilium/cilium
-version: 1.13.3
+version: 1.13.4
