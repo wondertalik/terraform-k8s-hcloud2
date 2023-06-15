@@ -54,6 +54,9 @@
 {{- $bpfCtTcpMax := (coalesce .Values.bpf.ctTcpMax $defaultBpfCtTcpMax) -}}
 {{- $bpfCtAnyMax := (coalesce .Values.bpf.ctAnyMax $defaultBpfCtAnyMax) -}}
 {{- $kubeProxyReplacement := (coalesce .Values.kubeProxyReplacement $defaultKubeProxyReplacement) -}}
+{{- if and (ne $kubeProxyReplacement "disabled") (ne $kubeProxyReplacement "partial") (ne $kubeProxyReplacement "strict") }}
+  {{ fail "kubeproxyReplacement must be explicitly set to a valid value (disabled, partial, or strict) to continue." }}
+{{- end }}
 {{- $azureUsePrimaryAddress = (coalesce .Values.azure.usePrimaryAddress $azureUsePrimaryAddress) -}}
 {{- $socketLB := (coalesce .Values.socketLB .Values.hostServices) -}}
 ---
@@ -517,6 +520,9 @@ data:
 
     {{- if .Values.encryption.nodeEncryption }}
   encrypt-node: {{ .Values.encryption.nodeEncryption | quote }}
+    {{- end }}
+    {{- if hasKey .Values.encryption.ipsec "keyWatcher" }}
+  enable-ipsec-key-watcher: {{ .Values.encryption.ipsec.keyWatcher | quote }}
     {{- end }}
   {{- else if eq .Values.encryption.type "wireguard" }}
   enable-wireguard: {{ .Values.encryption.enabled | quote }}
