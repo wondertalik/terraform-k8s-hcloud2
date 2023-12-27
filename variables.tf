@@ -298,3 +298,21 @@ variable "promtail_custom_values_path" {
 variable "promtail_version" {
   default = "6.1.2"
 }
+
+variable "seq_version" {
+  default = "2023.4.2"
+}
+
+variable "seq_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "seq_install" {
+  type    = bool
+  default = false
+}
+
+variable "seq_custom_values_path" {
+  default = ""
+}

@@ -423,6 +423,50 @@ resource "null_resource" "promtail" {
   }
 }
 
+resource "null_resource" "seq" {
+  depends_on = [
+    null_resource.init_masters
+  ]
+  triggers = {
+    seq_version            = var.seq_version
+    seq_install            = var.seq_install
+    seq_custom_values_path = var.seq_custom_values_path
+  }
+  count = var.seq_enabled ? 1 : 0
+
+  connection {
+    host        = hcloud_server.entrance_server.ipv4_address
+    port        = var.custom_ssh_port
+    type        = "ssh"
+    private_key = file(var.ssh_private_key_entrance)
+    user        = var.user_name
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p charts",
+      "rm -rf charts/seq"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "charts/seq"
+    destination = "charts"
+  }
+
+  provisioner "file" {
+    on_failure  = continue
+    source      = var.seq_custom_values_path
+    destination = "charts/seq/values.yaml"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "SEQ_VERSION=${var.seq_version} SEQ_INSTALL=${var.seq_install} bash charts/seq/install.sh"
+    ]
+  }
+}
+
 resource "null_resource" "post_restart_masters" {
   depends_on = [
     null_resource.cilium,
